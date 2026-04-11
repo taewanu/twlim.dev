@@ -1,65 +1,139 @@
-import Image from "next/image";
+import { LocalTime } from "./components/LocalTime";
 
-export default function Home() {
+export function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
+    <main className="mx-auto max-w-xl px-6 py-12 sm:py-20">
+      <h1 className="fade-in font-serif text-3xl font-bold tracking-tight">
+        Taewan Lim
+      </h1>
+
+      <div
+        className="fade-in stagger-1 mt-12 space-y-5 text-base leading-relaxed tracking-tight"
+        style={{ fontWeight: 460 }}
+      >
+        <p>
+          I was born in Seoul, Korea. Currently, based in Bangkok, Thailand.
+        </p>
+
+        <p>
+          I&apos;m a frontend engineer. Previously at a fintech company in
+          Seoul, where I built internal dashboards, a customer-facing loan site,
+          and developer tooling as a VSCode extension.
+        </p>
+
+        <p>
+          Before switching to an engineering career, I had a product
+          management background at a food delivery startup in Seoul. It helped
+          me think not just about building features, but why they exist, which
+          is a mindset I still carry.
+        </p>
+
+        <p>
+          I&apos;ve also done a handful of different things. I picked
+          blueberries in Tasmania, made bath bombs at a LUSH factory in Sydney,
+          led beer tours in Seoul, and promoted a Korean theatre team at the
+          Edinburgh Fringe Festival in Scotland.
+        </p>
+
+        <p>
+          You can also find me on{" "}
           <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href="https://linkedin.com/in/taewanlim"
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
+            LinkedIn
           </a>
+          {" "}and{" "}
           <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
+            href="https://linktr.ee/wanu"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Documentation
+            Linktree
           </a>
-        </div>
-      </main>
-    </div>
+          , or reach me via{" "}
+          <a href="mailto:twlim.dev@gmail.com">email</a>.
+        </p>
+      </div>
+
+      <section className="fade-in stagger-2 mt-12">
+        <h2 className="font-serif text-lg font-bold">Client Works</h2>
+        <ul
+          className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
+          style={{ fontWeight: 460 }}
+        >
+          <li>
+            <a
+              href="https://serene.kr"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Serene
+            </a>
+            <span className="text-muted">
+              {" "}
+              — Corporate website for an exterior design studio
+            </span>
+          </li>
+          <li>
+            <a
+              href="https://store.thegegenuber.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Gegenüber Store
+            </a>
+            <span className="text-muted"> — Shopify e-commerce store</span>
+          </li>
+          <li>
+            <a
+              href="https://thegegenuber.com"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Gegenüber
+            </a>
+            <span className="text-muted"> — Brand landing page</span>
+          </li>
+        </ul>
+      </section>
+
+      <section className="fade-in stagger-3 mt-12">
+        <h2 className="font-serif text-lg font-bold">Contact</h2>
+        <ul
+          className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
+          style={{ fontWeight: 460 }}
+        >
+          <li>
+            <a href="mailto:twlim.dev@gmail.com">Email</a>
+          </li>
+          <li>
+            <a
+              href="https://linkedin.com/in/taewanlim"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              LinkedIn
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://github.com/taewanu"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <footer className="fade-in stagger-4 mt-12">
+        <LocalTime />
+      </footer>
+    </main>
   );
 }
+
+export default Home;
