@@ -58,6 +58,28 @@ export function Home() {
       </div>
 
       <section className="fade-in stagger-2 mt-12">
+        <h2 className="font-serif text-lg font-bold">Projects</h2>
+        <ul
+          className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
+          style={{ fontWeight: 460 }}
+        >
+          <li>
+            <a
+              href="https://soundsabroad.app"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Sounds Abroad
+            </a>
+            <span className="text-muted">
+              {" "}
+              — 3D globe for discovering trending music around the world
+            </span>
+          </li>
+        </ul>
+      </section>
+
+      <section className="fade-in stagger-3 mt-12">
         <h2 className="font-serif text-lg font-bold">Client Works</h2>
         <ul
           className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
@@ -86,20 +108,10 @@ export function Home() {
             </a>
             <span className="text-muted"> — Shopify e-commerce store</span>
           </li>
-          <li>
-            <a
-              href="https://thegegenuber.com"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Gegenüber
-            </a>
-            <span className="text-muted"> — Brand landing page</span>
-          </li>
         </ul>
       </section>
 
-      <section className="fade-in stagger-3 mt-12">
+      <section className="fade-in stagger-4 mt-12">
         <h2 className="font-serif text-lg font-bold">Contact</h2>
         <ul
           className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
@@ -129,7 +141,7 @@ export function Home() {
         </ul>
       </section>
 
-      <footer className="fade-in stagger-4 mt-12">
+      <footer className="fade-in stagger-5 mt-12">
         <LocalTime />
       </footer>
     </main>
