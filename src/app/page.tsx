@@ -100,13 +100,16 @@ export function Home() {
           </li>
           <li>
             <a
-              href="https://store.thegegenuber.com"
+              href="https://turiya.kr"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Gegenüber Store
+              Turiya
             </a>
-            <span className="text-muted"> — Shopify e-commerce store</span>
+            <span className="text-muted">
+              {" "}
+              — Shopify store curating works by artists and designers
+            </span>
           </li>
         </ul>
       </section>
