@@ -12,7 +12,7 @@ export function Home() {
         style={{ fontWeight: 460 }}
       >
         <p>
-          I was born in Seoul, Korea. Currently, based in Bangkok, Thailand.
+          I was born in Seoul, Korea. Currently, based in Seoul, Korea.
         </p>
 
         <p>
@@ -100,13 +100,16 @@ export function Home() {
           </li>
           <li>
             <a
-              href="https://store.thegegenuber.com"
+              href="https://turiya.kr"
               target="_blank"
               rel="noopener noreferrer"
             >
-              Gegenüber Store
+              Turiya
             </a>
-            <span className="text-muted"> — Shopify e-commerce store</span>
+            <span className="text-muted">
+              {" "}
+              — Shopify store curating works by artists and designers
+            </span>
           </li>
         </ul>
       </section>

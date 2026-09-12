@@ -1,7 +1,5 @@
 # Personal Website — Wanu
 
-Minimal, text-centric personal website.
-
 ## Stack
 
 - Next.js (App Router, src/ directory)
