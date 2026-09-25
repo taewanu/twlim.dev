@@ -87,7 +87,7 @@ export function Home() {
         >
           <li>
             <a
-              href="https://serene.kr"
+              href="https://renewal.serene-renewal.pages.dev"
               target="_blank"
               rel="noopener noreferrer"
             >
@@ -95,7 +95,7 @@ export function Home() {
             </a>
             <span className="text-muted">
               {" "}
-              — Corporate website for an exterior design studio
+              — Corporate website for a signage design and build company
             </span>
           </li>
           <li>
