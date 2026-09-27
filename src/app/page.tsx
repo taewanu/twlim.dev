@@ -12,7 +12,7 @@ export function Home() {
         style={{ fontWeight: 460 }}
       >
         <p>
-          I was born in Seoul, Korea. Currently, based in Seoul, Korea.
+          I was born in Seoul, Korea. Currently, based in Vancouver, Canada.
         </p>
 
         <p>

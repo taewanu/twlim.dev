@@ -12,7 +12,7 @@ import {
 } from "lucide-react";
 
 const WEATHER_URL =
-  "https://api.open-meteo.com/v1/forecast?latitude=37.5665&longitude=126.9780&current=weather_code";
+  "https://api.open-meteo.com/v1/forecast?latitude=49.2827&longitude=-123.1207&current=weather_code";
 
 type WeatherResponse = {
   current: { weather_code: number };

@@ -9,7 +9,7 @@ function formatTime(date: Date): string {
       hour: "numeric",
       minute: "2-digit",
       hour12: true,
-      timeZone: "Asia/Seoul",
+      timeZone: "America/Vancouver",
     })
     .toLowerCase()
     .replace(" ", "");
@@ -47,7 +47,7 @@ export function LocalTime() {
 
   return (
     <p className="text-sm text-muted tabular-nums">
-      {time} in Seoul, Korea
+      {time} in Vancouver, Canada
       <Weather />
     </p>
   );
