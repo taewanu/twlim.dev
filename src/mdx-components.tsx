@@ -1,7 +1,9 @@
 import type { MDXComponents } from "mdx/types";
+import Image from "next/image";
 import Link from "next/link";
 
 const components: MDXComponents = {
+  Image,
   a: ({ href = "", children }) => {
     if (href.startsWith("/")) return <Link href={href}>{children}</Link>;
     if (!href.startsWith("http")) return <a href={href}>{children}</a>;
