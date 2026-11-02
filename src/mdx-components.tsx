@@ -1,7 +1,9 @@
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
+import { LectureDemo } from "@/app/components/LectureDemo";
 
 const components: MDXComponents = {
+  LectureDemo,
   a: ({ href = "", children }) => {
     if (href.startsWith("/")) return <Link href={href}>{children}</Link>;
     if (!href.startsWith("http")) return <a href={href}>{children}</a>;

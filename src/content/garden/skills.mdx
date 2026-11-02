@@ -1,0 +1,37 @@
+---
+title: Building agent skills with AI
+stage: sapling
+planted: 2026-06-13
+tended: 2026-11-02
+topics: [Building with AI]
+---
+
+Personal Claude Code skills · [github.com/taewanu/skills](https://github.com/taewanu/skills)
+
+I build small agent skills for my own freelance and product work. They aren't products. They just make working with AI a little better. This page walks through one of them, start to finish.
+
+The skill is `visual-code-lecture`. It turns a function or a diff into a walkthrough you scroll. The code stays pinned. Short notes light up one line at a time, with a hand-drawn mark over it. This is how it went from "this came out wrong" to merged.
+
+<LectureDemo />
+
+<p className="mt-2 mb-[1.1rem] text-[0.8125rem] text-muted">This is the real skill, running on a small standalone snippet. The frame is a screenshot. Open it to scroll the lecture and switch the marker ink.</p>
+
+## Read the artifact before trusting it
+
+It started with a generated page that looked broken. I read it instead of regenerating. There were two defects. A leftover template comment leaked text into the code panel. A CSS grid let a long line push the notes column off the screen. Both lived in the template, so the fix reached every page the skill produces.
+
+## A plain base, the hand-drawn part on top
+
+The page tried to look hand-drawn everywhere. I rebased it on an ordinary GitHub pull request layout. The sketched marks stayed as a thin layer on top. They now appear only where they point at something.
+
+## I am the wrong person to judge my own notes
+
+The notes are the actual lesson. I wrote them, so I had stopped seeing them. A fresh subagent read only the first line of each note, in order. Those openings should teach the flow on their own. Two had the point buried in the second half and got rewritten.
+
+## Move the decision to whoever uses it
+
+I kept asking which highlight color was best. That was just a guess. So I put a small palette in the page header. The reader clicks a swatch and every mark recolors. The colors came from design systems, compared by eye in the browser.
+
+## The bug I almost shipped
+
+Switching colors recolored the labels but not the hand-drawn strokes. My first check said it worked. It hadn't. The test clicked the swatch before the first draw, so it never ran the broken path. A click delayed by a second exposed it. The redraw cache used the mark's position but not its color. A same-spot recolor returned early and drew nothing. One line added the color to the cache key. That also fixed marks not updating between light and dark. The bug had stayed hidden because the ink was red in both.
