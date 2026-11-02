@@ -1,6 +1,10 @@
+import Link from "next/link";
+import { loadPlantedNotes } from "@/lib/garden";
 import { LocalTime } from "./components/LocalTime";
 
-export function Home() {
+export async function Home() {
+  const notes = await loadPlantedNotes();
+
   return (
     <main className="mx-auto max-w-xl px-6 py-12 sm:py-20">
       <h1 className="fade-in font-serif text-3xl font-bold tracking-tight">
@@ -73,13 +77,33 @@ export function Home() {
             </a>
             <span className="text-muted">
               {" "}
-              — 3D globe for discovering trending music around the world
+              · 3D globe for discovering trending music around the world
             </span>
           </li>
         </ul>
       </section>
 
       <section className="fade-in stagger-3 mt-12">
+        <h2 className="font-serif text-lg font-bold">
+          <Link href="/garden">Garden</Link>
+        </h2>
+        <ul
+          className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
+          style={{ fontWeight: 460 }}
+        >
+          {notes.map(({ slug, meta }) => (
+            <li key={slug} className="flex justify-between gap-6">
+              <span>
+                <Link href={`/garden/${slug}`}>{meta.title}</Link>
+                <span className="text-muted capitalize"> · {meta.stage}</span>
+              </span>
+              <span className="shrink-0 text-muted">{meta.tended}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+
+      <section className="fade-in stagger-4 mt-12">
         <h2 className="font-serif text-lg font-bold">Client Works</h2>
         <ul
           className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
@@ -95,7 +119,7 @@ export function Home() {
             </a>
             <span className="text-muted">
               {" "}
-              — Corporate website for a signage design and build company
+              · Corporate website for a signage design and build company
             </span>
           </li>
           <li>
@@ -108,13 +132,13 @@ export function Home() {
             </a>
             <span className="text-muted">
               {" "}
-              — Shopify store curating works by artists and designers
+              · Shopify store curating works by artists and designers
             </span>
           </li>
         </ul>
       </section>
 
-      <section className="fade-in stagger-4 mt-12">
+      <section className="fade-in stagger-5 mt-12">
         <h2 className="font-serif text-lg font-bold">Contact</h2>
         <ul
           className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
@@ -144,7 +168,7 @@ export function Home() {
         </ul>
       </section>
 
-      <footer className="fade-in stagger-5 mt-12">
+      <footer className="fade-in stagger-6 mt-12">
         <LocalTime />
       </footer>
     </main>
