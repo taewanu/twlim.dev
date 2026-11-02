@@ -80,6 +80,13 @@ export async function Home() {
               · 3D globe for discovering trending music around the world
             </span>
           </li>
+          <li>
+            <Link href="/garden/pr-review-agent">PR Review Agent</Link>
+            <span className="text-muted">
+              {" "}
+              · An AI agent that reviews my pull requests, including its own
+            </span>
+          </li>
         </ul>
       </section>
 
