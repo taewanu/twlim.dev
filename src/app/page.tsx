@@ -68,13 +68,7 @@ export async function Home() {
           style={{ fontWeight: 460 }}
         >
           <li>
-            <a
-              href="https://soundsabroad.app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Sounds Abroad
-            </a>
+            <Link href="/sounds-abroad">Sounds Abroad</Link>
             <span className="text-muted">
               {" "}
               · 3D globe for discovering trending music around the world
