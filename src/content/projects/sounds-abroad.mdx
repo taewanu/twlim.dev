@@ -30,31 +30,25 @@ If a PR does one thing and something breaks, I know where to look. A small PR is
 
 ## A second AI reviews
 
-A second agent reviews the first agent's work and tries to break it. CodeRabbit reviews it too.
+A second agent and CodeRabbit review each PR. What to accept stays my call.
 
-The reviewers are wrong sometimes. They also mix real defects with matters of taste. What to accept stays my call.
+*More to be written.*
 
 ## The research I didn't accept
 
-I wanted to translate song lyrics, so people could follow songs in other languages. An AI agent researched the licensing. Its answer was clear and well cited: not on my budget. A translation is a derivative work, so it needs the publisher's license.
+I wanted to translate song lyrics. An AI agent said the license was beyond my budget. I didn't accept it. Lyrics are all over the internet.
 
-I didn't accept it. Lyrics are all over the internet. How could the rules be that strict?
-
-So I sent a second agent to try to overturn the first answer. The core held. I still couldn't host or translate lyrics. But it found a legal path the first had missed: link to the official lyrics page.
-
-I cut translation. Instead, v1.2.0 added song notes: what a song is about, and why it's charting there. A check blocks any note that quotes lyrics.
+A second agent confirmed the limit, but found a path the first had missed: link to the official lyrics page. So v1.2.0 shipped song notes instead.
 
 <Clip src="/sounds-abroad/song-note.mp4" poster="/sounds-abroad/song-note.jpg" caption="A song note on Japan's chart. It explains the song without quoting it." />
 
+*More to be written.*
+
 ## Make it remember
 
-A session's context is gone when it ends. So I keep decisions, dead ends, and lessons in memory files. The next session starts from what we already agreed.
+A session forgets everything when it ends. So decisions, dead ends, and lessons go into memory files, and each slice ends with a short retro.
 
-When a new case breaks a rule, I update the rule.
-
-I write a short retro after every slice: what I did and what I learned. If I don't write it then, it's gone.
-
-Bigger decisions go into ADRs as they happen. There are 22 so far.
+Bigger decisions go into ADRs. There are 22 so far.
 
 ## The gesture I replaced
 
