@@ -1,4 +1,4 @@
-Sounds Abroad is a 3D globe for finding trending music by country. Pick a country and you get its current top tracks from Apple Music. Each track has a 30-second preview and links to Spotify and Apple Music.
+Sounds Abroad is a 3D globe for finding trending music by country. Pick a country to see its top tracks on Apple Music. Each track has a 30-second preview and links to Spotify and Apple Music.
 
 Claude Code wrote most of the code. This page is about the parts it couldn't do.
 
@@ -20,7 +20,7 @@ One slice is one branch, and one branch is one PR. The AI can write across sever
 
 A pre-commit hook ran format, lint, and typecheck. Before pushing, I ran the same checks CI would run. The build catches what typecheck and lint miss, like failures at prerender or at an RSC boundary.
 
-When a PR does one thing, I know where to look when something breaks. A small PR is also one I can read to the end, even when the AI wrote it.
+If a PR does one thing and something breaks, I know where to look. A small PR is also one I can read to the end, even when the AI wrote it.
 
 ## A second AI reviews
 
@@ -36,23 +36,15 @@ I didn't accept it. Lyrics are all over the internet. How could the rules be tha
 
 So I sent a second agent to try to overturn the first answer. The core held. I still couldn't host or translate lyrics. But it found a legal path the first had missed: link to the official lyrics page.
 
-I cut translation. Instead, v1.2.0 added a short note on each song: what it's about and why it's charting there. A check blocks any note that quotes lyrics.
+I cut translation. Instead, v1.2.0 added song notes: what a song is about, and why it's charting there. A check blocks any note that quotes lyrics.
 
 <Clip src="/sounds-abroad/song-note.mp4" poster="/sounds-abroad/song-note.jpg" caption="A song note on Japan's chart. It explains the song without quoting it." />
-
-## What the AI got wrong
-
-No compiler, test, or linter caught these.
-
-The AI was sure the chart was server-rendered. Types, lint, tests, and build all passed. A controlled A/B showed it wasn't. The sheet sat inside a Radix Portal, which doesn't SSR.
-
-Deferring the globe raised the LCP score. But no one got a better experience. So I refused it and redefined the gate around FCP, CLS, and TBT.
 
 ## Make it remember
 
 A session's context is gone when it ends. So I keep decisions, dead ends, and lessons in memory files. The next session starts from what we already agreed.
 
-A rule I wrote once still changes when a new case appears.
+When a new case breaks a rule, I update the rule.
 
 I write a short retro after every slice: what I did and what I learned. If I don't write it then, it's gone.
 
@@ -60,13 +52,13 @@ Bigger decisions go into ADRs as they happen. There are 22 so far.
 
 ## The gesture I replaced
 
-V2 shipped on June 25. Free rotation was gone. A flick spun the globe and settled on a country. The goal was to make small countries easier to pick.
+V2 shipped on June 25 and removed free rotation. A flick spun the globe and settled on a country. The goal was to make small countries easier to pick.
 
 It didn't work. Neighbouring countries were still a few pixels apart under a fingertip.
 
 <Clip src="/sounds-abroad/flick.mp4" poster="/sounds-abroad/flick.jpg" caption="The V2 flick, still live. Each flick lands on a new country." />
 
-In July I wrote a new decision. You drag, and the country at the centre is highlighted. You release, and you land there. It's only partly shipped so far.
+In July I chose a new gesture. You drag, and the country at the centre is highlighted. You release, and you land there. It's partly shipped.
 
 ## Now
 
