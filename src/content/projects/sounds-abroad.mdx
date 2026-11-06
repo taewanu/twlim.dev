@@ -6,7 +6,7 @@ So I thought of a fun way to explore what's trending around the world, like a dr
 
 Sounds Abroad is a 3D globe for finding trending music by country. Pick a country to see its top tracks on Apple Music. Each track has a 30-second preview and links to Spotify and Apple Music.
 
-Claude Code wrote most of the code. This page is about the parts it couldn't do.
+Claude Code wrote most of the code.
 
 <Clip src="/sounds-abroad/first-visit.mp4" poster="/sounds-abroad/first-visit.jpg" caption="A first visit. The globe lands on a country, and a hand shows the flick." />
 
@@ -14,23 +14,17 @@ Claude Code wrote most of the code. This page is about the parts it couldn't do.
 
 At my previous company, our team tried to keep PRs as small as possible. Then Matt Pocock's [skills](https://github.com/mattpocock/skills) introduced me to the term "vertical slice". It resonated, because that's what we had been aiming for.
 
-Small slices keep the AI accurate. Give it a big, vague task and it returns something plausible and wrong.
-
-I wrote a PRD first, to pin down why the app exists. It gave me a point to return to when the AI drifted.
-
-Then I split the work into thin vertical slices. I could check each one end to end before starting the next.
+I wrote a PRD first, to pin down why the app exists. Then I split the work into thin vertical slices.
 
 ## One slice, one PR
 
-One slice is one branch, and one branch is one PR. The AI can write across several slices at once, so I never bent that rule.
+One slice is one branch, and one branch is one PR.
 
-A pre-commit hook ran format, lint, and typecheck. Before pushing, I ran the same checks CI would run. The build catches what typecheck and lint miss, like failures at prerender or at an RSC boundary.
-
-If a PR does one thing and something breaks, I know where to look. A small PR is also one I can read to the end, even when the AI wrote it.
+A pre-commit hook ran format, lint, and typecheck. Before pushing, I ran the same checks CI would run.
 
 ## A second AI reviews
 
-A second agent and CodeRabbit review each PR. What to accept stays my call.
+A second agent and CodeRabbit review each PR.
 
 *This part is still growing.*
 
