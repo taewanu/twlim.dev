@@ -2,26 +2,20 @@
 title: Sounds Abroad build log
 stage: seed
 planted: 2026-06-12
-tended: 2026-11-02
+tended: 2026-11-05
 topics: [Building with AI]
 ---
 
-[Sounds Abroad](https://soundsabroad.app) is a 3D globe for finding trending music by country. Claude Code wrote most of the code. This note is about what it couldn't do.
+[Sounds Abroad](https://soundsabroad.app) is a 3D globe for finding trending music by country. I built it mostly with Claude Code. The longer version is on the [project page](/sounds-abroad).
 
 <Image src="/garden/sounds-abroad.png" alt="Sounds Abroad with South Korea selected on the globe and its chart below" width={240} height={519} className="my-5 rounded-lg border border-underline" />
 
 ## How I worked
 
-I wrote a PRD first. Then I cut scope until only the core was left. I worked in thin vertical slices, one small PR at a time. A second agent and CodeRabbit reviewed the changes. What to accept stayed my call.
-
-## What the AI got wrong
-
-The AI was sure the chart was server-rendered. Types, lint, tests, and build all passed. A controlled A/B showed it wasn't. The sheet sat inside a Radix Portal, which doesn't SSR.
-
-Deferring the globe raised the LCP score. But no one got a better experience. So I refused it and redefined the gate around FCP, CLS, and TBT.
+I wrote a PRD first. I worked in thin vertical slices, one small PR at a time. A second agent and CodeRabbit reviewed the changes.
 
 ## The gesture I replaced
 
 V2 shipped on June 25. A flick spun the globe and settled on a country. The goal was to make small countries easier to pick. It didn't work. Neighbouring countries were still a few pixels apart under a fingertip.
 
-In July I wrote a new decision. You drag, and the country at the centre is highlighted. You release, and you land there. It's only partly shipped so far.
+In July I chose a new gesture. You drag, and the country at the centre is highlighted. You release, and you land there. It's partly shipped.

@@ -1,8 +1,10 @@
 import type { MDXComponents } from "mdx/types";
 import Image from "next/image";
 import Link from "next/link";
+import { Clip } from "@/app/components/Clip";
 
 const components: MDXComponents = {
+  Clip,
   Image,
   a: ({ href = "", children }) => {
     if (href.startsWith("/")) return <Link href={href}>{children}</Link>;

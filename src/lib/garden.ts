@@ -25,7 +25,7 @@ function slugOf(file: string) {
 }
 
 // Slugs every heading level, as rehype-slug does, so the ids stay in sync with the page.
-function sectionsOf(source: string) {
+export function sectionsOf(source: string) {
   const slugger = new GithubSlugger();
   const withoutCode = source.replace(/^```[\s\S]*?^```/gm, "");
   return [...withoutCode.matchAll(/^(#{1,6}) (.+)$/gm)]

@@ -1,0 +1,55 @@
+When I travelled in Thailand, live gigs at restaurants and bars were a big part of the culture.
+
+I've used Spotify for ten years. But I mostly open the app and play whatever it recommends. I rarely explore. Ironically, I didn't know what music was popular in the country I was in, or why.
+
+So I thought of a fun way to explore what's trending around the world, like a drinking game.
+
+Sounds Abroad is a 3D globe for finding trending music by country. Pick a country to see its top tracks on Apple Music. Each track has a 30-second preview and links to Spotify and Apple Music. I built it mostly with Claude Code.
+
+<Clip src="/sounds-abroad/first-visit.mp4" poster="/sounds-abroad/first-visit.jpg" caption="A first visit. The globe lands on a country, and a hand shows the flick." />
+
+## From idea to slice
+
+At my previous company, our team tried to keep PRs as small as possible. Then Matt Pocock's [skills](https://github.com/mattpocock/skills) introduced me to the term "vertical slice". It resonated, because that's what we had been aiming for.
+
+I wrote a PRD first, to pin down why the app exists. Then I split the work into thin vertical slices.
+
+## One slice, one PR
+
+One slice is one branch, and one branch is one PR.
+
+A pre-commit hook ran format, lint, and typecheck. Before pushing, I ran the same checks CI would run.
+
+## A second AI reviews
+
+A second agent and CodeRabbit review each PR.
+
+*This part is still growing.*
+
+## Why it's trending
+
+What I wanted most was to show why a song is trending in a country. v1.2.0 added that as song notes. They're not where I want them yet.
+
+<Clip src="/sounds-abroad/song-note.mp4" poster="/sounds-abroad/song-note.jpg" caption="A song note on Japan's chart: why this song is trending there." />
+
+*This part is still growing.*
+
+## Make it remember
+
+A session forgets everything when it ends. So decisions, dead ends, and lessons go into memory files, and each slice ends with a short retro.
+
+Bigger decisions go into ADRs. There are 22 so far.
+
+## The gesture I replaced
+
+V2 shipped on June 25 and removed free rotation. A flick spun the globe and settled on a country. The goal was to make small countries easier to pick.
+
+It didn't work. Neighbouring countries were still a few pixels apart under a fingertip.
+
+<Clip src="/sounds-abroad/flick.mp4" poster="/sounds-abroad/flick.jpg" caption="The V2 flick, still live. Each flick lands on a new country." />
+
+In July I chose a new gesture. You drag, and the country at the centre is highlighted. You release, and you land there. It's partly shipped.
+
+## Now
+
+The app is live at [soundsabroad.app](https://soundsabroad.app). It covers 63 countries. Each country has one hidden gem: a local favourite, sometimes with a note on why it caught on.
