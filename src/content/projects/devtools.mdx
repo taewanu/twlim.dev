@@ -1,0 +1,35 @@
+At Lendit, a fintech startup in Seoul, I built internal developer tools. The main one was a VS Code extension for our framework, which renders app screens from component graphs.
+
+## The preview panel
+
+The preview panel renders a component next to its code, in a resizable mobile viewport. Developers could check a component with editable mock data instead of running the app.
+
+## The graph panel
+
+The graph panel shows each component as a directed acyclic graph. Hovering a node highlights what it renders in the preview.
+
+<Clip src="/devtools/node-type-filter.mp4" poster="/devtools/node-type-filter.jpg" width={1200} height={754} caption="Filtering the graph by node type." />
+
+<Clip src="/devtools/graph-tooltips.mp4" poster="/devtools/graph-tooltips.jpg" width={1100} height={932} caption="Hovering a node or an edge shows its type and IDs." />
+
+## The roadmap
+
+I led the extension's roadmap as its product owner. I turned feedback from the team's developers into features.
+
+One was a tree view that shows each component's rendered elements as nested directories.
+
+<Clip src="/devtools/graph-tree-highlight.mp4" poster="/devtools/graph-tree-highlight.jpg" width={1100} height={1096} caption="Hovering a row in the tree view highlights its path in the graph." />
+
+## Messages between panels
+
+Each panel runs in isolation. I designed a type-safe message interface with Zod schemas, so panels could post messages to each other through the extension process.
+
+I drew the extension's architecture for its technical guide.
+
+<Image src="/devtools/architecture.png" alt="Architecture diagram: a component loader and services feed the extension backend, which drives the sidebar, graph, render-tree and preview panels" width={1200} height={1453} className="my-5 rounded-lg border border-underline" />
+
+## Documentation
+
+I started the extension's technical documentation. I also built AI prompt files that review docs against writing rules for structure, readability, and Korean usage.
+
+The prompts are enabled across the team's monorepo, to keep docs in one voice.
