@@ -22,7 +22,8 @@ export async function Home() {
         <p>
           I&apos;m a software developer. Previously at a fintech company in
           Seoul, where I built internal dashboards, a customer-facing loan site,
-          and developer tooling as a VSCode extension.
+          and <Link href="/devtools">developer tooling as a VS Code extension</Link>
+          .
         </p>
 
         <p>
@@ -70,7 +71,7 @@ export async function Home() {
       </div>
 
       <section className="fade-in stagger-2 mt-12">
-        <h2 className="font-serif text-lg font-bold">Projects</h2>
+        <h2 className="font-serif text-lg font-bold">Experience</h2>
         <ul
           className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
           style={{ fontWeight: 460 }}
@@ -82,6 +83,15 @@ export async function Home() {
               · VS Code extension for previewing and inspecting app screens
             </span>
           </li>
+        </ul>
+      </section>
+
+      <section className="fade-in stagger-3 mt-12">
+        <h2 className="font-serif text-lg font-bold">Projects</h2>
+        <ul
+          className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
+          style={{ fontWeight: 460 }}
+        >
           <li>
             <Link href="/sounds-abroad">Sounds Abroad</Link>
             <span className="text-muted">
@@ -99,7 +109,7 @@ export async function Home() {
         </ul>
       </section>
 
-      <section className="fade-in stagger-3 mt-12">
+      <section className="fade-in stagger-4 mt-12">
         <h2 className="font-serif text-lg font-bold">
           <Link href="/garden">Garden</Link>
         </h2>
@@ -119,7 +129,7 @@ export async function Home() {
         </ul>
       </section>
 
-      <section className="fade-in stagger-4 mt-12">
+      <section className="fade-in stagger-5 mt-12">
         <h2 className="font-serif text-lg font-bold">Client Works</h2>
         <ul
           className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
@@ -154,7 +164,7 @@ export async function Home() {
         </ul>
       </section>
 
-      <section className="fade-in stagger-5 mt-12">
+      <section className="fade-in stagger-6 mt-12">
         <h2 className="font-serif text-lg font-bold">Contact</h2>
         <ul
           className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
@@ -184,7 +194,7 @@ export async function Home() {
         </ul>
       </section>
 
-      <footer className="fade-in stagger-6 mt-12">
+      <footer className="fade-in stagger-7 mt-12">
         <LocalTime />
       </footer>
     </main>

@@ -7,12 +7,17 @@ export function Clip({
   src,
   poster,
   caption,
+  width = 390,
+  height = 844,
 }: {
   src: string;
   poster: string;
   caption: string;
+  width?: number;
+  height?: number;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const size = height > width * 1.5 ? "w-[240px]" : "w-full";
 
   useEffect(() => {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
@@ -32,19 +37,19 @@ export function Clip({
         type="button"
         onClick={toggle}
         aria-label="Play or pause the clip"
-        className="block cursor-pointer"
+        className={`block cursor-pointer ${size}`}
       >
         <video
           ref={ref}
           src={src}
           poster={poster}
-          width={390}
-          height={844}
+          width={width}
+          height={height}
           muted
           loop
           playsInline
           preload="metadata"
-          className="w-[240px] rounded-lg border border-underline"
+          className="w-full rounded-lg border border-underline"
         />
       </button>
       <figcaption className="mt-2 text-[0.8125rem] text-muted">
