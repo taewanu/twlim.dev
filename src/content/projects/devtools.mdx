@@ -1,29 +1,29 @@
-At Lendit, a fintech startup in Seoul, we built the app's screens with an in-house framework that renders them from component graphs. To see a screen, a developer had to run the app.
-
-So a teammate and I built a VS Code extension that shows a component next to its code, as a graph, a render tree, and a live preview.
-
-## The graph panel
-
-I set up the graph panel. It draws a component as nodes and edges, so you can see how a screen is put together.
-
-I added a filter by node type, a view of each node's and edge's properties, and saved layouts. Hovering a node highlights the matching element in the preview.
-
-<Image src="/devtools/graph.png" alt="The graph panel showing a component as a tree of nodes connected by labelled edges" width={1000} height={1106} className="my-5 rounded-lg border border-underline" />
-
-## The render tree
-
-I also set up the render-tree panel. It lists what the framework actually renders, one row per element.
-
-<Image src="/devtools/render-tree.png" alt="The render-tree panel listing nested elements, with one row highlighted under the cursor" width={1000} height={500} className="my-5 rounded-lg border border-underline" />
+At Lendit, a fintech startup in Seoul, I built internal developer tools. The main one was a VS Code extension for our framework, which renders app screens from component graphs.
 
 ## The preview panel
 
-The preview renders one component at phone size, next to its code.
+The preview panel renders a component next to its code, in a resizable mobile viewport. Developers could check a component with editable mock data instead of running the app.
 
-I built its data editors, so developers could try a component with mock props and service data instead of running the app. I also built its viewport toolbar: iPhone presets, a custom width and height, and rotation.
+## The graph panel
 
-## Who built what
+The graph panel shows each component as a directed acyclic graph. Hovering a node highlights what it renders in the preview.
 
-My teammate set up the extension itself and the first preview panel. I reported most of the extension's tickets, turning feedback from our developers into features.
+<Image src="/devtools/graph.png" alt="The graph panel showing a component as a tree of nodes connected by labelled edges" width={1000} height={1106} className="my-5 rounded-lg border border-underline" />
 
-I also started the extension's technical documentation, and wrote AI prompt files that review docs against the team's writing rules.
+## The roadmap
+
+I led the extension's roadmap as its product owner. I turned feedback from the team's developers into features.
+
+One was a tree view that shows each component's rendered elements as nested directories.
+
+<Image src="/devtools/render-tree.png" alt="The tree view listing a component's rendered elements as nested rows, with one row highlighted under the cursor" width={1000} height={500} className="my-5 rounded-lg border border-underline" />
+
+## Messages between panels
+
+Each panel runs in isolation. I designed a type-safe message interface with Zod schemas, so panels could post messages to each other through the extension process.
+
+## Documentation
+
+I started the extension's technical documentation. I also built AI prompt files that review docs against writing rules for structure, readability, and Korean usage.
+
+The prompts are enabled across the team's monorepo, to keep docs in one voice.

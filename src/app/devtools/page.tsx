@@ -9,7 +9,7 @@ import { sectionsOf } from "@/lib/garden";
 export const metadata: Metadata = {
   title: "Lendit Devtools · Taewan Lim",
   description:
-    "A VS Code extension I helped build at Lendit to preview and inspect app screens next to their code.",
+    "A VS Code extension I built at Lendit to preview and inspect app screens next to their code.",
 };
 
 const sections = sectionsOf(
@@ -38,7 +38,7 @@ export function Devtools() {
           Lendit Devtools
         </h1>
         <p className="mt-1.5 mb-11 text-[0.8125rem] text-muted">
-          Lendit, 2024–2025 · Written 2026-11-16 · Internal tool
+          Lendit, Feb 2023 – Oct 2025 · Written 2026-11-16
         </p>
         <Content />
         <Link
