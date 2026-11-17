@@ -16,7 +16,7 @@ const lora = Lora({
 export const metadata: Metadata = {
   metadataBase: new URL("https://twlim.dev"),
   title: "Taewan Lim",
-  description: "Frontend · Product Engineer",
+  description: "Software Developer",
 };
 
 export function RootLayout({

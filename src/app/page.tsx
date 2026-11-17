@@ -20,7 +20,7 @@ export async function Home() {
         </p>
 
         <p>
-          I&apos;m a frontend engineer. Previously at a fintech company in
+          I&apos;m a software developer. Previously at a fintech company in
           Seoul, where I built internal dashboards, a customer-facing loan site,
           and developer tooling as a VSCode extension.
         </p>
