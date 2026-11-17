@@ -1,0 +1,29 @@
+At Lendit, a fintech startup in Seoul, we built the app's screens with an in-house framework that renders them from component graphs. To see a screen, a developer had to run the app.
+
+So a teammate and I built a VS Code extension that shows a component next to its code, as a graph, a render tree, and a live preview.
+
+## The graph panel
+
+I set up the graph panel. It draws a component as nodes and edges, so you can see how a screen is put together.
+
+I added a filter by node type, a view of each node's and edge's properties, and saved layouts. Hovering a node highlights the matching element in the preview.
+
+<Image src="/devtools/graph.png" alt="The graph panel showing a component as a tree of nodes connected by labelled edges" width={1000} height={1106} className="my-5 rounded-lg border border-underline" />
+
+## The render tree
+
+I also set up the render-tree panel. It lists what the framework actually renders, one row per element.
+
+<Image src="/devtools/render-tree.png" alt="The render-tree panel listing nested elements, with one row highlighted under the cursor" width={1000} height={500} className="my-5 rounded-lg border border-underline" />
+
+## The preview panel
+
+The preview renders one component at phone size, next to its code.
+
+I built its data editors, so developers could try a component with mock props and service data instead of running the app. I also built its viewport toolbar: iPhone presets, a custom width and height, and rotation.
+
+## Who built what
+
+My teammate set up the extension itself and the first preview panel. I reported most of the extension's tickets, turning feedback from our developers into features.
+
+I also started the extension's technical documentation, and wrote AI prompt files that review docs against the team's writing rules.

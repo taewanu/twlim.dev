@@ -42,6 +42,14 @@ export async function Home() {
         <p>
           You can also find me on{" "}
           <a
+            href="https://github.com/taewanu"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            GitHub
+          </a>
+          ,{" "}
+          <a
             href="https://linkedin.com/in/taewanlim"
             target="_blank"
             rel="noopener noreferrer"
@@ -67,6 +75,13 @@ export async function Home() {
           className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
           style={{ fontWeight: 460 }}
         >
+          <li>
+            <Link href="/devtools">Lendit Devtools</Link>
+            <span className="text-muted">
+              {" "}
+              · VS Code extension for previewing and inspecting app screens
+            </span>
+          </li>
           <li>
             <Link href="/sounds-abroad">Sounds Abroad</Link>
             <span className="text-muted">
