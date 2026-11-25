@@ -1,20 +1,25 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import GithubSlugger from "github-slugger";
-import type { MDXContent } from "mdx/types";
+import type { MDXContent, MDXModule } from "mdx/types";
+import { z } from "zod";
 
 const GARDEN_DIR = path.join(process.cwd(), "src/content/garden");
-const STAGES = ["seed", "sapling", "mallorn"] as const;
-const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
-export type NoteMeta = {
-  title: string;
-  stage: (typeof STAGES)[number];
-  planted: string;
-  tended: string;
-  topics: string[];
-  lang?: string;
-};
+const NoteMeta = z.object({
+  title: z.string().min(1),
+  stage: z.enum(["seed", "sapling", "mallorn"]),
+  planted: z.iso.date(),
+  tended: z.iso.date(),
+  topics: z.array(z.string()),
+  lang: z.string().optional(),
+});
+export type NoteMeta = z.infer<typeof NoteMeta>;
+
+const NoteModule = z.object({
+  default: z.custom<MDXContent>((value) => typeof value === "function"),
+  frontmatter: NoteMeta,
+}) satisfies z.ZodType<MDXModule>;
 
 function noteFiles() {
   return readdirSync(GARDEN_DIR).filter((file) => /\.mdx?$/.test(file));
@@ -45,26 +50,15 @@ export async function loadNote(slug: string) {
   const file = noteFiles().find((candidate) => slugOf(candidate) === slug);
   if (!file) throw new Error(`No garden note for slug "${slug}"`);
 
-  const note = (await import(`@/content/garden/${file}`)) as {
-    default: MDXContent;
-    frontmatter: NoteMeta;
-  };
-
-  const { title, stage, planted, tended, topics } = note.frontmatter;
-  if (
-    !title ||
-    !STAGES.includes(stage) ||
-    !ISO_DATE.test(planted) ||
-    !ISO_DATE.test(tended) ||
-    !Array.isArray(topics)
-  ) {
-    throw new Error(`${file}: invalid frontmatter`);
+  const note = NoteModule.safeParse(await import(`@/content/garden/${file}`));
+  if (!note.success) {
+    throw new Error(`${file}: invalid note\n${z.prettifyError(note.error)}`);
   }
 
   return {
     slug,
-    Content: note.default,
-    meta: note.frontmatter,
+    Content: note.data.default,
+    meta: note.data.frontmatter,
     sections: sectionsOf(readFileSync(path.join(GARDEN_DIR, file), "utf8")),
   };
 }
@@ -73,5 +67,5 @@ export async function loadPlantedNotes() {
   const notes = await Promise.all(noteSlugs().map((slug) => loadNote(slug)));
   return notes
     .filter((note) => note.meta.topics.length > 0)
-    .sort((a, b) => b.meta.tended.localeCompare(a.meta.tended));
+    .toSorted((a, b) => b.meta.tended.localeCompare(a.meta.tended));
 }
