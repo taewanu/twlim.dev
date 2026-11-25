@@ -140,7 +140,22 @@ export function CompareSlider({
         <div
           className={`pointer-events-none absolute inset-y-0 left-(--split) w-px -translate-x-1/2 bg-bg outline outline-text/25 peer-focus-visible:*:outline-2 peer-focus-visible:*:outline-offset-2 peer-focus-visible:*:outline-text ${gliding ? 'motion-safe:transition-[left] motion-safe:duration-150' : ''}`}
         >
-          <span className="absolute top-1/2 left-1/2 size-6 -translate-x-1/2 -translate-y-1/2 rounded-full border border-text bg-bg" />
+          <span className="absolute top-1/2 left-1/2 grid size-6 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-text bg-bg text-text">
+            <svg
+              width="12"
+              height="8"
+              viewBox="0 0 12 8"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.4"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M3.5 1 L0.8 4 L3.5 7" />
+              <path d="M8.5 1 L11.2 4 L8.5 7" />
+            </svg>
+          </span>
         </div>
       </div>
       <figcaption className="mt-2 text-meta text-muted">{caption}</figcaption>
