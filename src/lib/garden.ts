@@ -1,7 +1,7 @@
 import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import GithubSlugger from "github-slugger";
-import type { MDXModule } from "mdx/types";
+import type { MDXContent, MDXModule } from "mdx/types";
 import { z } from "zod";
 
 const GARDEN_DIR = path.join(process.cwd(), "src/content/garden");
@@ -15,6 +15,11 @@ const NoteMeta = z.object({
   lang: z.string().optional(),
 });
 export type NoteMeta = z.infer<typeof NoteMeta>;
+
+const NoteModule = z.object({
+  default: z.custom<MDXContent>((value) => typeof value === "function"),
+  frontmatter: NoteMeta,
+}) satisfies z.ZodType<MDXModule>;
 
 function noteFiles() {
   return readdirSync(GARDEN_DIR).filter((file) => /\.mdx?$/.test(file));
@@ -45,18 +50,15 @@ export async function loadNote(slug: string) {
   const file = noteFiles().find((candidate) => slugOf(candidate) === slug);
   if (!file) throw new Error(`No garden note for slug "${slug}"`);
 
-  const note: MDXModule = await import(`@/content/garden/${file}`);
-  const meta = NoteMeta.safeParse(note.frontmatter);
-  if (!meta.success) {
-    throw new Error(
-      `${file}: invalid frontmatter\n${z.prettifyError(meta.error)}`,
-    );
+  const note = NoteModule.safeParse(await import(`@/content/garden/${file}`));
+  if (!note.success) {
+    throw new Error(`${file}: invalid note\n${z.prettifyError(note.error)}`);
   }
 
   return {
     slug,
-    Content: note.default,
-    meta: meta.data,
+    Content: note.data.default,
+    meta: note.data.frontmatter,
     sections: sectionsOf(readFileSync(path.join(GARDEN_DIR, file), "utf8")),
   };
 }
