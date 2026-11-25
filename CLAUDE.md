@@ -1,6 +1,6 @@
 # twlim.dev
 
-Taewan Lim's personal site: Next.js App Router on Vercel, with lint, format and the pre-commit hook run by Vite+ (`vite.config.ts`).
+Taewan Lim's personal site, built with Next.js (App Router) and deployed on Vercel. Vite+ runs linting, formatting and the pre-commit hook; its config is in `vite.config.ts`.
 
 ## Design
 
