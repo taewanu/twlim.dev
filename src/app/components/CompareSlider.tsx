@@ -25,8 +25,45 @@ export function CompareSlider({
   afterLabel?: string;
 }) {
   const [split, setSplit] = useState(50);
+  const [gliding, setGliding] = useState(false);
   const boxRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const dragged = useRef(false);
   const size = height > width * 1.5 ? 'w-[240px]' : 'w-full';
+
+  function splitAt(clientX: number) {
+    const box = boxRef.current;
+    if (!box) return;
+    const { left, width: boxWidth } = box.getBoundingClientRect();
+    setSplit(Math.round(Math.min(100, Math.max(0, ((clientX - left) / boxWidth) * 100))));
+  }
+
+  function jumpTo(clientX: number) {
+    setGliding(true);
+    splitAt(clientX);
+  }
+
+  // Touch waits for a sideways move or a tap, so a vertical scroll that starts on the frame leaves the split alone.
+  function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
+    event.currentTarget.setPointerCapture(event.pointerId);
+    inputRef.current?.focus({ preventScroll: true });
+    dragged.current = false;
+    if (event.pointerType === 'mouse') {
+      event.preventDefault();
+      jumpTo(event.clientX);
+    }
+  }
+
+  function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
+    if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
+    dragged.current = true;
+    setGliding(false);
+    splitAt(event.clientX);
+  }
+
+  function onPointerUp(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.pointerType !== 'mouse' && !dragged.current) jumpTo(event.clientX);
+  }
 
   useEffect(() => {
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
@@ -72,23 +109,37 @@ export function CompareSlider({
             '--split': `${split}%`,
           } as React.CSSProperties
         }
-        className={`relative [container-type:size] overflow-hidden rounded-lg border border-underline ${size}`}
+        className={`relative cursor-ew-resize touch-pan-y overflow-hidden [-webkit-touch-callout:none] rounded-lg border border-underline select-none ${size}`}
+        onDragStart={(e) => e.preventDefault()}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
       >
         <input
+          ref={inputRef}
           type="range"
           min={0}
           max={100}
           value={split}
-          onChange={(e) => setSplit(Number(e.target.value))}
+          onChange={(e) => {
+            setGliding(false);
+            setSplit(Number(e.target.value));
+          }}
           aria-label={`${beforeLabel} and ${afterLabel.toLowerCase()}: ${caption}`}
           aria-valuetext={`${100 - split}% ${afterLabel.toLowerCase()}`}
-          className="peer absolute inset-y-0 -left-5.5 z-10 m-0 h-full w-[calc(100%+2.75rem)] cursor-ew-resize touch-pan-y appearance-none bg-transparent opacity-0 [&::-moz-range-thumb]:h-full [&::-moz-range-thumb]:w-11 [&::-moz-range-track]:h-full [&::-webkit-slider-runnable-track]:h-full [&::-webkit-slider-thumb]:h-[100cqh] [&::-webkit-slider-thumb]:w-11 [&::-webkit-slider-thumb]:appearance-none"
+          className="peer pointer-events-none sr-only"
         />
         {layer(before)}
-        <div className="absolute inset-0 [clip-path:inset(0_0_0_var(--split))]">{layer(after)}</div>
+        <div
+          className={`absolute inset-0 [clip-path:inset(0_0_0_var(--split))] ${gliding ? 'motion-safe:transition-[clip-path] motion-safe:duration-150' : ''}`}
+        >
+          {layer(after)}
+        </div>
         <span className={`${pill} left-2`}>{beforeLabel}</span>
         <span className={`${pill} right-2`}>{afterLabel}</span>
-        <div className="pointer-events-none absolute inset-y-0 left-(--split) w-px -translate-x-1/2 bg-bg outline outline-text/25 peer-focus-visible:*:outline-2 peer-focus-visible:*:outline-offset-2 peer-focus-visible:*:outline-text">
+        <div
+          className={`pointer-events-none absolute inset-y-0 left-(--split) w-px -translate-x-1/2 bg-bg outline outline-text/25 peer-focus-visible:*:outline-2 peer-focus-visible:*:outline-offset-2 peer-focus-visible:*:outline-text ${gliding ? 'motion-safe:transition-[left] motion-safe:duration-150' : ''}`}
+        >
           <span className="absolute top-1/2 left-1/2 size-6 -translate-x-1/2 -translate-y-1/2 rounded-full border border-text bg-bg" />
         </div>
       </div>
