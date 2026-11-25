@@ -11,10 +11,7 @@ export async function Home() {
     <main className="mx-auto max-w-xl px-6 py-12 sm:py-20">
       <h1 className="fade-in font-serif text-3xl font-bold tracking-tight">Taewan Lim</h1>
 
-      <div
-        className="fade-in stagger-1 mt-12 space-y-5 text-base leading-relaxed tracking-tight"
-        style={{ fontWeight: 460 }}
-      >
+      <div className="fade-in stagger-1 mt-12 space-y-5 text-base leading-relaxed tracking-tight font-reading">
         <p>I was born in Seoul, Korea. Currently, based in Vancouver, Canada.</p>
 
         <p>
@@ -54,10 +51,7 @@ export async function Home() {
 
       <section className="fade-in stagger-2 mt-12">
         <h2 className="font-serif text-lg font-bold">Experience</h2>
-        <ul
-          className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
-          style={{ fontWeight: 460 }}
-        >
+        <ul className="mt-4 space-y-3 text-base leading-relaxed tracking-tight font-reading">
           <li>
             <Link href="/devtools">Lendit Devtools</Link>
             <span className="text-muted">
@@ -70,10 +64,7 @@ export async function Home() {
 
       <section className="fade-in stagger-3 mt-12">
         <h2 className="font-serif text-lg font-bold">Projects</h2>
-        <ul
-          className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
-          style={{ fontWeight: 460 }}
-        >
+        <ul className="mt-4 space-y-3 text-base leading-relaxed tracking-tight font-reading">
           <li>
             <Link href="/sounds-abroad">Sounds Abroad</Link>
             <span className="text-muted">
@@ -95,10 +86,7 @@ export async function Home() {
         <h2 className="font-serif text-lg font-bold">
           <Link href="/garden">Garden</Link>
         </h2>
-        <ul
-          className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
-          style={{ fontWeight: 460 }}
-        >
+        <ul className="mt-4 space-y-3 text-base leading-relaxed tracking-tight font-reading">
           {notes.map(({ slug, meta }) => (
             <li key={slug} className="flex justify-between gap-6">
               <span>
@@ -113,10 +101,7 @@ export async function Home() {
 
       <section className="fade-in stagger-5 mt-12">
         <h2 className="font-serif text-lg font-bold">Client Works</h2>
-        <ul
-          className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
-          style={{ fontWeight: 460 }}
-        >
+        <ul className="mt-4 space-y-3 text-base leading-relaxed tracking-tight font-reading">
           <li>
             <a
               href="https://renewal.serene-renewal.pages.dev"
@@ -144,10 +129,7 @@ export async function Home() {
 
       <section className="fade-in stagger-6 mt-12">
         <h2 className="font-serif text-lg font-bold">Contact</h2>
-        <ul
-          className="mt-4 space-y-3 text-base leading-relaxed tracking-tight"
-          style={{ fontWeight: 460 }}
-        >
+        <ul className="mt-4 space-y-3 text-base leading-relaxed tracking-tight font-reading">
           <li>
             <a href="mailto:twlim.dev@gmail.com">Email</a>
           </li>

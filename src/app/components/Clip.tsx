@@ -52,7 +52,7 @@ export function Clip({
           className="w-full rounded-lg border border-underline"
         />
       </button>
-      <figcaption className="mt-2 text-[0.8125rem] text-muted">{caption}</figcaption>
+      <figcaption className="mt-2 text-meta text-muted">{caption}</figcaption>
     </figure>
   );
 }

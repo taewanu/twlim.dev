@@ -5,6 +5,16 @@
   --color-text: #2c2926;
   --color-muted: #9b9590;
   --color-underline: #e5e1de;
+  --color-subtle: #6f6a64;
+  --color-code-bg: #f4f2ef;
+  --text-meta: 0.8125rem;
+  --text-article: 0.875rem;
+  --text-article--line-height: 1.7;
+  --text-heading: 0.875rem;
+  --text-heading--line-height: 1.4rem;
+  --font-weight-reading: 460;
+  --spacing-block: 1.1rem;
+  --container-article: 560px;
   --font-serif: var(--font-lora);
   --font-sans: var(--font-source-sans);
 }
@@ -30,7 +40,7 @@ code {
   font-family: ui-monospace, Menlo, monospace;
   font-size: 0.875em;
   letter-spacing: 0;
-  background-color: #f4f2ef;
+  background-color: var(--color-code-bg);
   padding: 1px 5px;
   border-radius: 3px;
 }
