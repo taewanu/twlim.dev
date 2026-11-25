@@ -1,7 +1,11 @@
 'use client';
 
+import { ChevronsLeftRight } from 'lucide-react';
 import Image from 'next/image';
-import { useEffect, useRef, useState } from 'react';
+import { type CSSProperties, type PointerEvent, useEffect, useRef, useState } from 'react';
+
+import { prefersReducedMotion } from '@/lib/motion';
+import { cn } from '@/lib/utils';
 
 type Media = { src: string; alt: string; poster?: string };
 
@@ -44,7 +48,7 @@ export function CompareSlider({
   }
 
   // Touch waits for a sideways move or a tap, so a vertical scroll that starts on the frame leaves the split alone.
-  function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
+  function onPointerDown(event: PointerEvent<HTMLDivElement>) {
     event.currentTarget.setPointerCapture(event.pointerId);
     inputRef.current?.focus({ preventScroll: true });
     dragged.current = false;
@@ -54,19 +58,19 @@ export function CompareSlider({
     }
   }
 
-  function onPointerMove(event: React.PointerEvent<HTMLDivElement>) {
+  function onPointerMove(event: PointerEvent<HTMLDivElement>) {
     if (!event.currentTarget.hasPointerCapture(event.pointerId)) return;
     dragged.current = true;
     setGliding(false);
     splitAt(event.clientX);
   }
 
-  function onPointerUp(event: React.PointerEvent<HTMLDivElement>) {
+  function onPointerUp(event: PointerEvent<HTMLDivElement>) {
     if (event.pointerType !== 'mouse' && !dragged.current) jumpTo(event.clientX);
   }
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (prefersReducedMotion()) return;
     boxRef.current?.querySelectorAll('video').forEach((video) => {
       video.play().catch(() => {});
     });
@@ -107,9 +111,12 @@ export function CompareSlider({
           {
             aspectRatio: `${width} / ${height}`,
             '--split': `${split}%`,
-          } as React.CSSProperties
+          } as CSSProperties
         }
-        className={`relative cursor-ew-resize touch-pan-y overflow-hidden [-webkit-touch-callout:none] rounded-lg border border-underline select-none ${size}`}
+        className={cn(
+          'relative cursor-ew-resize touch-pan-y overflow-hidden rounded-lg border border-underline select-none [-webkit-touch-callout:none]',
+          size,
+        )}
         onDragStart={(e) => e.preventDefault()}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}
@@ -131,30 +138,23 @@ export function CompareSlider({
         />
         {layer(before)}
         <div
-          className={`absolute inset-0 [clip-path:inset(0_0_0_var(--split))] ${gliding ? 'motion-safe:transition-[clip-path] motion-safe:duration-150' : ''}`}
+          className={cn(
+            'absolute inset-0 [clip-path:inset(0_0_0_var(--split))]',
+            gliding && 'motion-safe:transition-[clip-path] motion-safe:duration-150',
+          )}
         >
           {layer(after)}
         </div>
         <span className={`${pill} left-2`}>{beforeLabel}</span>
         <span className={`${pill} right-2`}>{afterLabel}</span>
         <div
-          className={`pointer-events-none absolute inset-y-0 left-(--split) w-px -translate-x-1/2 bg-bg outline outline-text/25 peer-focus-visible:*:outline-2 peer-focus-visible:*:outline-offset-2 peer-focus-visible:*:outline-text ${gliding ? 'motion-safe:transition-[left] motion-safe:duration-150' : ''}`}
+          className={cn(
+            'pointer-events-none absolute inset-y-0 left-(--split) w-px -translate-x-1/2 bg-bg outline outline-text/25 peer-focus-visible:*:outline-2 peer-focus-visible:*:outline-offset-2 peer-focus-visible:*:outline-text',
+            gliding && 'motion-safe:transition-[left] motion-safe:duration-150',
+          )}
         >
           <span className="absolute top-1/2 left-1/2 grid size-6 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full border border-text bg-bg text-text">
-            <svg
-              width="12"
-              height="8"
-              viewBox="0 0 12 8"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="1.4"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden="true"
-            >
-              <path d="M3.5 1 L0.8 4 L3.5 7" />
-              <path d="M8.5 1 L11.2 4 L8.5 7" />
-            </svg>
+            <ChevronsLeftRight aria-hidden="true" className="size-3.5" strokeWidth={1.75} />
           </span>
         </div>
       </div>

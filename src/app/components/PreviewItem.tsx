@@ -3,6 +3,8 @@
 import Link from 'next/link';
 import { useRef } from 'react';
 
+import { prefersReducedMotion } from '@/lib/motion';
+
 const VIEWPORT_GAP = 24;
 
 type PreviewClip = { src: string; poster: string; width: number; height: number };
@@ -30,7 +32,7 @@ export function PreviewItem({
     const opensUp = el.offsetHeight > roomBelow && roomAbove > roomBelow;
     el.style.top = opensUp ? 'auto' : '';
     el.style.bottom = opensUp ? '0' : '';
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (prefersReducedMotion()) return;
     el.play().catch(() => {});
   }
 
