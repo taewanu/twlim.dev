@@ -9,7 +9,10 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "oxlint"
+    "lint": "vp lint",
+    "format": "vp fmt",
+    "check": "vp check",
+    "prepare": "vp config --no-agent"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
@@ -33,9 +36,8 @@
     "@types/node": "^22.20.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "oxlint": "^1.95.0",
-    "oxlint-tsgolint": "^7.0.2008",
     "tailwindcss": "^4.3.3",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vite-plus": "^1.8.0"
   }
 }

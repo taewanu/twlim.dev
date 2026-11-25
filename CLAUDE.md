@@ -28,7 +28,7 @@
 ## Verification
 
 - `npm run build` — must pass before considering work done
-- `npm run lint` — must pass before commit
+- `npm run check` — format, lint and type-aware rules; must pass before commit (the pre-commit hook runs it on staged files)
 
 ## Gotchas
 
