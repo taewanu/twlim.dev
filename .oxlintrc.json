@@ -10,11 +10,18 @@
   "options": { "typeAware": true },
   "rules": {
     "react/rules-of-hooks": "error",
+    "react/unsupported-syntax": "error",
     "react/react-in-jsx-scope": "off",
-    "import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
+    "typescript/ban-ts-comment": "error",
+    "typescript/no-array-constructor": "error",
+    "typescript/no-empty-object-type": "error",
     "typescript/no-explicit-any": "error",
-    "unicorn/filename-case": ["error", { "cases": { "kebabCase": true, "pascalCase": true } }],
+    "typescript/no-namespace": "error",
+    "typescript/no-require-imports": "error",
+    "typescript/no-unsafe-function-type": "error",
     "eslint/no-var": "error",
-    "eslint/prefer-const": "error"
+    "eslint/prefer-const": "error",
+    "import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
+    "unicorn/filename-case": ["error", { "cases": { "kebabCase": true, "pascalCase": true } }]
   }
 }
