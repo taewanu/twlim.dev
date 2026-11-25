@@ -13,6 +13,8 @@
     "react/react-in-jsx-scope": "off",
     "import/no-unassigned-import": ["warn", { "allow": ["**/*.css"] }],
     "typescript/no-explicit-any": "error",
-    "unicorn/filename-case": ["error", { "cases": { "kebabCase": true, "pascalCase": true } }]
+    "unicorn/filename-case": ["error", { "cases": { "kebabCase": true, "pascalCase": true } }],
+    "eslint/no-var": "error",
+    "eslint/prefer-const": "error"
   }
 }
