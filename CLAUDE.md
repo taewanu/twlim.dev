@@ -22,7 +22,7 @@
 - Named exports (not default)
 - Server components by default; 'use client' only when necessary
 - Tailwind classes on elements directly, no @apply
-- No external UI libraries (no MUI, Chakra, Radix). shadcn OK
+- UI components come from shadcn on Base UI, added one at a time as a page needs them; no other UI libraries (MUI, Chakra, Radix)
 - One component per file, PascalCase.tsx
 
 ## Verification
