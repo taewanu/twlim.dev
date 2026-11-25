@@ -1,0 +1,38 @@
+import { defineConfig } from 'vite-plus';
+
+export default defineConfig({
+  fmt: { singleQuote: true, sortImports: true },
+  lint: {
+    plugins: ['typescript', 'unicorn', 'oxc', 'react', 'jsx-a11y', 'nextjs', 'import'],
+    categories: { correctness: 'error', suspicious: 'warn', perf: 'warn' },
+    ignorePatterns: ['.next/', 'next-env.d.ts'],
+    options: { typeAware: true },
+    rules: {
+      'react/rules-of-hooks': 'error',
+      'react/unsupported-syntax': 'error',
+      'react/react-in-jsx-scope': 'off',
+      'typescript/ban-ts-comment': 'error',
+      'typescript/no-array-constructor': 'error',
+      'typescript/no-empty-object-type': 'error',
+      'typescript/no-explicit-any': 'error',
+      'typescript/no-namespace': 'error',
+      'typescript/no-require-imports': 'error',
+      'typescript/no-unsafe-function-type': 'error',
+      'typescript/no-misused-promises': 'error',
+      'typescript/no-unsafe-argument': 'error',
+      'typescript/no-unsafe-assignment': 'error',
+      'typescript/no-unsafe-call': 'error',
+      'typescript/no-unsafe-member-access': 'error',
+      'typescript/no-unsafe-return': 'error',
+      'typescript/only-throw-error': 'error',
+      'typescript/prefer-promise-reject-errors': 'error',
+      'typescript/require-await': 'error',
+      'typescript/restrict-plus-operands': 'error',
+      'eslint/no-var': 'error',
+      'eslint/prefer-const': 'error',
+      'import/no-unassigned-import': ['warn', { allow: ['**/*.css'] }],
+      'unicorn/filename-case': ['error', { cases: { kebabCase: true, pascalCase: true } }],
+    },
+  },
+  staged: { '*': 'vp check --fix' },
+});

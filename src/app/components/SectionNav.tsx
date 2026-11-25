@@ -1,7 +1,7 @@
-"use client";
+'use client';
 
-import Link from "next/link";
-import { useEffect, useState } from "react";
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 type Section = { id: string; label: string };
 
@@ -23,7 +23,7 @@ export function SectionNav({
           if (entry.isIntersecting) setActive(entry.target.id);
         });
       },
-      { rootMargin: "-12% 0px -76% 0px" },
+      { rootMargin: '-12% 0px -76% 0px' },
     );
     for (const section of sections) {
       const el = document.getElementById(section.id);
@@ -43,7 +43,7 @@ export function SectionNav({
             key={section.id}
             href={`#${section.id}`}
             className={`mb-[9px] block leading-[1.4] no-underline! transition-colors ${
-              active === section.id ? "text-[#6f6a64]" : "text-muted"
+              active === section.id ? 'text-[#6f6a64]' : 'text-muted'
             }`}
           >
             {section.label}

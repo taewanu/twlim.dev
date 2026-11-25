@@ -1,22 +1,21 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { SectionNav } from "@/app/components/SectionNav";
-import Content from "@/content/projects/sounds-abroad.mdx";
-import { sectionsOf } from "@/lib/garden";
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
+import { SectionNav } from '@/app/components/SectionNav';
+import Content from '@/content/projects/sounds-abroad.mdx';
+import { sectionsOf } from '@/lib/garden';
 
 export const metadata: Metadata = {
-  title: "Sounds Abroad · Taewan Lim",
+  title: 'Sounds Abroad · Taewan Lim',
   description:
     "A 3D globe for finding trending music by country, and what the AI couldn't do while building it.",
 };
 
 const sections = sectionsOf(
-  readFileSync(
-    path.join(process.cwd(), "src/content/projects/sounds-abroad.mdx"),
-    "utf8",
-  ),
+  readFileSync(path.join(process.cwd(), 'src/content/projects/sounds-abroad.mdx'), 'utf8'),
 );
 
 export function SoundsAbroad() {
@@ -38,12 +37,8 @@ export function SoundsAbroad() {
           Sounds Abroad
         </h1>
         <p className="mt-1.5 mb-11 text-[0.8125rem] text-muted">
-          Launched 2026-06-08 · Written 2026-11-05 ·{" "}
-          <a
-            href="https://soundsabroad.app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          Launched 2026-06-08 · Written 2026-11-05 ·{' '}
+          <a href="https://soundsabroad.app" target="_blank" rel="noopener noreferrer">
             soundsabroad.app
           </a>
         </p>

@@ -1,10 +1,10 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @theme inline {
-  --color-bg: #FDFDFC;
-  --color-text: #2C2926;
-  --color-muted: #9B9590;
-  --color-underline: #E5E1DE;
+  --color-bg: #fdfdfc;
+  --color-text: #2c2926;
+  --color-muted: #9b9590;
+  --color-underline: #e5e1de;
   --font-serif: var(--font-lora);
   --font-sans: var(--font-source-sans);
 }
@@ -51,13 +51,27 @@ code {
   animation: fadeIn 0.6s ease forwards;
 }
 
-.stagger-1 { animation-delay: 0.1s; }
-.stagger-2 { animation-delay: 0.2s; }
-.stagger-3 { animation-delay: 0.3s; }
-.stagger-4 { animation-delay: 0.4s; }
-.stagger-5 { animation-delay: 0.5s; }
-.stagger-6 { animation-delay: 0.6s; }
-.stagger-7 { animation-delay: 0.7s; }
+.stagger-1 {
+  animation-delay: 0.1s;
+}
+.stagger-2 {
+  animation-delay: 0.2s;
+}
+.stagger-3 {
+  animation-delay: 0.3s;
+}
+.stagger-4 {
+  animation-delay: 0.4s;
+}
+.stagger-5 {
+  animation-delay: 0.5s;
+}
+.stagger-6 {
+  animation-delay: 0.6s;
+}
+.stagger-7 {
+  animation-delay: 0.7s;
+}
 
 @media (prefers-reduced-motion: reduce) {
   .fade-in {

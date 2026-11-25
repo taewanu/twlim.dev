@@ -1,14 +1,15 @@
-import type { MDXComponents } from "mdx/types";
-import Image from "next/image";
-import Link from "next/link";
-import { Clip } from "@/app/components/Clip";
+import type { MDXComponents } from 'mdx/types';
+import Image from 'next/image';
+import Link from 'next/link';
+
+import { Clip } from '@/app/components/Clip';
 
 const components: MDXComponents = {
   Clip,
   Image,
-  a: ({ href = "", children }) => {
-    if (href.startsWith("/")) return <Link href={href}>{children}</Link>;
-    if (!href.startsWith("http")) return <a href={href}>{children}</a>;
+  a: ({ href = '', children }) => {
+    if (href.startsWith('/')) return <Link href={href}>{children}</Link>;
+    if (!href.startsWith('http')) return <a href={href}>{children}</a>;
     return (
       <a href={href} target="_blank" rel="noopener noreferrer">
         {children}
@@ -32,12 +33,8 @@ const components: MDXComponents = {
     </h3>
   ),
   p: ({ children }) => <p className="mb-[1.1rem]">{children}</p>,
-  ul: ({ children }) => (
-    <ul className="mb-[1.1rem] list-disc space-y-1.5 pl-5">{children}</ul>
-  ),
-  ol: ({ children }) => (
-    <ol className="mb-[1.1rem] list-decimal space-y-1.5 pl-5">{children}</ol>
-  ),
+  ul: ({ children }) => <ul className="mb-[1.1rem] list-disc space-y-1.5 pl-5">{children}</ul>,
+  ol: ({ children }) => <ol className="mb-[1.1rem] list-decimal space-y-1.5 pl-5">{children}</ol>,
   blockquote: ({ children }) => (
     <blockquote className="mb-[1.1rem] border-l border-underline pl-4 text-muted">
       {children}
@@ -54,13 +51,9 @@ const components: MDXComponents = {
     </table>
   ),
   th: ({ children }) => (
-    <th className="border-b border-underline py-1.5 pr-4 font-semibold">
-      {children}
-    </th>
+    <th className="border-b border-underline py-1.5 pr-4 font-semibold">{children}</th>
   ),
-  td: ({ children }) => (
-    <td className="border-b border-underline py-1.5 pr-4">{children}</td>
-  ),
+  td: ({ children }) => <td className="border-b border-underline py-1.5 pr-4">{children}</td>,
 };
 
 export function useMDXComponents(): MDXComponents {

@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import { useSyncExternalStore } from "react";
-import { Weather } from "./Weather";
+import { useSyncExternalStore } from 'react';
+
+import { Weather } from './Weather';
 
 function formatTime(date: Date): string {
   return date
-    .toLocaleTimeString("en-US", {
-      hour: "numeric",
-      minute: "2-digit",
+    .toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
       hour12: true,
-      timeZone: "America/Vancouver",
+      timeZone: 'America/Vancouver',
     })
     .toLowerCase()
-    .replace(" ", "");
+    .replace(' ', '');
 }
 
 function subscribe(callback: () => void) {
   const now = new Date();
-  const msUntilNextMinute =
-    (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
+  const msUntilNextMinute = (60 - now.getSeconds()) * 1000 - now.getMilliseconds();
 
   let interval: ReturnType<typeof setInterval> | undefined;
   const timeout = setTimeout(() => {
