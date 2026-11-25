@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export async function Garden() {
   const notes = await loadPlantedNotes();
-  const topics = [...new Set(notes.flatMap((note) => note.meta.topics))].sort();
+  const topics = [...new Set(notes.flatMap((note) => note.meta.topics))].toSorted();
 
   return (
     <main

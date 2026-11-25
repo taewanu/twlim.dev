@@ -41,23 +41,34 @@ export function noteSlugs() {
   return noteFiles().map(slugOf);
 }
 
+function isNoteMeta(value: unknown): value is NoteMeta {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "title" in value &&
+    typeof value.title === "string" &&
+    value.title !== "" &&
+    "stage" in value &&
+    STAGES.some((stage) => stage === value.stage) &&
+    "planted" in value &&
+    typeof value.planted === "string" &&
+    ISO_DATE.test(value.planted) &&
+    "tended" in value &&
+    typeof value.tended === "string" &&
+    ISO_DATE.test(value.tended) &&
+    "topics" in value &&
+    Array.isArray(value.topics)
+  );
+}
+
 export async function loadNote(slug: string) {
   const file = noteFiles().find((candidate) => slugOf(candidate) === slug);
   if (!file) throw new Error(`No garden note for slug "${slug}"`);
 
-  const note = (await import(`@/content/garden/${file}`)) as {
-    default: MDXContent;
-    frontmatter: NoteMeta;
-  };
-
-  const { title, stage, planted, tended, topics } = note.frontmatter;
-  if (
-    !title ||
-    !STAGES.includes(stage) ||
-    !ISO_DATE.test(planted) ||
-    !ISO_DATE.test(tended) ||
-    !Array.isArray(topics)
-  ) {
+  const note: { default: MDXContent; frontmatter: unknown } = await import(
+    `@/content/garden/${file}`
+  );
+  if (!isNoteMeta(note.frontmatter)) {
     throw new Error(`${file}: invalid frontmatter`);
   }
 
@@ -73,5 +84,5 @@ export async function loadPlantedNotes() {
   const notes = await Promise.all(noteSlugs().map((slug) => loadNote(slug)));
   return notes
     .filter((note) => note.meta.topics.length > 0)
-    .sort((a, b) => b.meta.tended.localeCompare(a.meta.tended));
+    .toSorted((a, b) => b.meta.tended.localeCompare(a.meta.tended));
 }
