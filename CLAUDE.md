@@ -1,35 +1,21 @@
-# Personal Website — Wanu
+# twlim.dev
 
-## Stack
+Taewan Lim's personal site: Next.js App Router on Vercel, with lint, format and the pre-commit hook run by Vite+ (`vite.config.ts`).
 
-- Next.js (App Router, src/ directory)
-- TypeScript (strict)
-- Tailwind CSS
-- Vercel deploy
+## Design
 
-## Design System
+- Use the tokens in `src/app/globals.css` (`@theme`) instead of raw values.
+- Serif headings, sans body, generous whitespace, no decorative elements.
+- Never: hero images, gradients, card shadows, purple accents, the Inter font.
 
-- Background: #FDFDFC
-- Text: #2C2926 (warm black)
-- Muted: #9B9590 (warm grey)
-- Typography hierarchy: serif headings, system sans body
-- Aesthetic: generous whitespace, no decorative elements
-- Fonts: Source Sans 3 (body), Lora (headings)
-- NEVER: hero images, gradients, card shadows, purple accents, Inter font
+## Code
 
-## Code Conventions
+- Named exports; a page also default-exports the same component because Next.js requires it.
+- Server components by default; `'use client'` only when needed.
+- Tailwind classes on elements; no `@apply`.
+- One component per file, PascalCase.
 
-- Named exports (not default)
-- Server components by default; 'use client' only when necessary
-- Tailwind classes on elements directly, no @apply
-- UI components come from shadcn on Base UI, added one at a time as a page needs them; no other UI libraries (MUI, Chakra, Radix)
-- One component per file, PascalCase.tsx
+## Verify
 
-## Verification
-
-- `npm run build` — must pass before considering work done
-- `npm run check` — format, lint and type-aware rules; must pass before commit (the pre-commit hook runs it on staged files)
-
-## Gotchas
-
-<!-- Claude가 실수할 때마다 여기에 한 줄씩 추가 -->
+- `npm run check` before committing (the pre-commit hook runs it on staged files).
+- `npm run build` before calling work done.
