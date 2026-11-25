@@ -1,12 +1,44 @@
 @import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
 
 @theme inline {
   --color-bg: #fdfdfc;
   --color-text: #2c2926;
   --color-muted: #9b9590;
   --color-underline: #e5e1de;
+  --color-subtle: #6f6a64;
+  --color-code-bg: #f4f2ef;
+  --text-meta: 0.8125rem;
+  --text-article: 0.875rem;
+  --text-article--line-height: 1.7;
+  --text-heading: 0.875rem;
+  --text-heading--line-height: 1.4rem;
+  --font-weight-reading: 460;
+  --spacing-block: 1.1rem;
+  --container-article: 560px;
   --font-serif: var(--font-lora);
   --font-sans: var(--font-source-sans);
+  --font-heading: var(--font-serif);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
 }
 
 body {
@@ -30,7 +62,7 @@ code {
   font-family: ui-monospace, Menlo, monospace;
   font-size: 0.875em;
   letter-spacing: 0;
-  background-color: #f4f2ef;
+  background-color: var(--color-code-bg);
   padding: 1px 5px;
   border-radius: 3px;
 }
@@ -78,4 +110,25 @@ code {
     opacity: 1;
     animation: none;
   }
+}
+
+:root {
+  --background: var(--color-bg);
+  --foreground: var(--color-text);
+  --card: var(--color-bg);
+  --card-foreground: var(--color-text);
+  --popover: var(--color-bg);
+  --popover-foreground: var(--color-text);
+  --primary: var(--color-text);
+  --primary-foreground: var(--color-bg);
+  --secondary: var(--color-code-bg);
+  --secondary-foreground: var(--color-text);
+  --muted-foreground: var(--color-muted);
+  --accent: var(--color-code-bg);
+  --accent-foreground: var(--color-text);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: var(--color-underline);
+  --input: var(--color-underline);
+  --ring: var(--color-muted);
+  --radius: 0.5rem;
 }

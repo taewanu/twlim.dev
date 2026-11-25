@@ -33,7 +33,7 @@ export function SectionNav({
   }, [sections]);
 
   return (
-    <aside className="fixed top-20 left-[max(24px,calc(50%-540px))] hidden w-[188px] text-[0.8125rem] text-muted min-[1100px]:block">
+    <aside className="fixed top-20 left-[max(24px,calc(50%-540px))] hidden w-[188px] text-meta text-muted min-[1100px]:block">
       <Link href={backHref} className="mb-7 inline-block no-underline!">
         ← {backLabel}
       </Link>
@@ -43,7 +43,7 @@ export function SectionNav({
             key={section.id}
             href={`#${section.id}`}
             className={`mb-[9px] block leading-[1.4] no-underline! transition-colors ${
-              active === section.id ? 'text-[#6f6a64]' : 'text-muted'
+              active === section.id ? 'text-subtle' : 'text-muted'
             }`}
           >
             {section.label}

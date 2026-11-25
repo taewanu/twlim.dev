@@ -28,17 +28,16 @@ export async function GardenNote({ params }: Props) {
 
       <main
         lang={meta.lang}
-        className="mx-auto max-w-[560px] px-6 pt-20 pb-50 text-[0.875rem] leading-[1.7] tracking-tight"
-        style={{ fontWeight: 460 }}
+        className="mx-auto max-w-article px-6 pt-20 pb-50 text-article tracking-tight font-reading"
       >
         <Link
           href="/"
-          className="-my-3 mb-4 inline-block py-3 pr-3 text-[0.8125rem] text-muted min-[1100px]:hidden"
+          className="-my-3 mb-4 inline-block py-3 pr-3 text-meta text-muted min-[1100px]:hidden"
         >
           ← Index
         </Link>
-        <h1 className="font-serif text-[0.875rem] leading-[1.4rem] tracking-tight">{meta.title}</h1>
-        <p className="mt-1.5 mb-11 text-[0.8125rem] text-muted">
+        <h1 className="font-serif text-heading tracking-tight">{meta.title}</h1>
+        <p className="mt-1.5 mb-11 text-meta text-muted">
           <Link href="/garden/about" className="capitalize">
             {meta.stage}
           </Link>{' '}
@@ -47,7 +46,7 @@ export async function GardenNote({ params }: Props) {
         <Content />
         <Link
           href="/"
-          className="-my-3 mt-8 inline-block py-3 pr-3 text-[0.8125rem] text-muted min-[1100px]:hidden"
+          className="-my-3 mt-8 inline-block py-3 pr-3 text-meta text-muted min-[1100px]:hidden"
         >
           ← Index
         </Link>

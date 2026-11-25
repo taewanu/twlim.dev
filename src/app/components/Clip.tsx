@@ -2,6 +2,8 @@
 
 import { useEffect, useRef } from 'react';
 
+import { prefersReducedMotion } from '@/lib/motion';
+
 // Loops like a GIF, but holds still for reduced motion and pauses on tap.
 export function Clip({
   src,
@@ -20,7 +22,7 @@ export function Clip({
   const size = height > width * 1.5 ? 'w-[240px]' : 'w-full';
 
   useEffect(() => {
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (prefersReducedMotion()) return;
     ref.current?.play().catch(() => {});
   }, []);
 
@@ -52,7 +54,7 @@ export function Clip({
           className="w-full rounded-lg border border-underline"
         />
       </button>
-      <figcaption className="mt-2 text-[0.8125rem] text-muted">{caption}</figcaption>
+      <figcaption className="mt-2 text-meta text-muted">{caption}</figcaption>
     </figure>
   );
 }
