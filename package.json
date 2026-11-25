@@ -9,7 +9,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "oxlint"
   },
   "dependencies": {
     "@mdx-js/loader": "^3.1.1",
@@ -32,8 +32,7 @@
     "@types/node": "^22.20.2",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",
-    "eslint": "^9.39.5",
-    "eslint-config-next": "16.4.6",
+    "oxlint": "^1.95.0",
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3"
   }
