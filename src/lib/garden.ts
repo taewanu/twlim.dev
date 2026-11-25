@@ -1,14 +1,15 @@
-import { readdirSync, readFileSync } from "node:fs";
-import path from "node:path";
-import GithubSlugger from "github-slugger";
-import type { MDXContent, MDXModule } from "mdx/types";
-import { z } from "zod";
+import { readdirSync, readFileSync } from 'node:fs';
+import path from 'node:path';
 
-const GARDEN_DIR = path.join(process.cwd(), "src/content/garden");
+import GithubSlugger from 'github-slugger';
+import type { MDXContent, MDXModule } from 'mdx/types';
+import { z } from 'zod';
+
+const GARDEN_DIR = path.join(process.cwd(), 'src/content/garden');
 
 const NoteMeta = z.object({
   title: z.string().min(1),
-  stage: z.enum(["seed", "sapling", "mallorn"]),
+  stage: z.enum(['seed', 'sapling', 'mallorn']),
   planted: z.iso.date(),
   tended: z.iso.date(),
   topics: z.array(z.string()),
@@ -17,7 +18,7 @@ const NoteMeta = z.object({
 export type NoteMeta = z.infer<typeof NoteMeta>;
 
 const NoteModule = z.object({
-  default: z.custom<MDXContent>((value) => typeof value === "function"),
+  default: z.custom<MDXContent>((value) => typeof value === 'function'),
   frontmatter: NoteMeta,
 }) satisfies z.ZodType<MDXModule>;
 
@@ -26,16 +27,16 @@ function noteFiles() {
 }
 
 function slugOf(file: string) {
-  return file.replace(/\.mdx?$/, "");
+  return file.replace(/\.mdx?$/, '');
 }
 
 // Slugs every heading level, as rehype-slug does, so the ids stay in sync with the page.
 export function sectionsOf(source: string) {
   const slugger = new GithubSlugger();
-  const withoutCode = source.replace(/^```[\s\S]*?^```/gm, "");
+  const withoutCode = source.replace(/^```[\s\S]*?^```/gm, '');
   return [...withoutCode.matchAll(/^(#{1,6}) (.+)$/gm)]
     .map(([, hashes, text]) => {
-      const label = text.replace(/`/g, "").trim();
+      const label = text.replace(/`/g, '').trim();
       return { level: hashes.length, id: slugger.slug(label), label };
     })
     .filter((heading) => heading.level === 2)
@@ -59,7 +60,7 @@ export async function loadNote(slug: string) {
     slug,
     Content: note.data.default,
     meta: note.data.frontmatter,
-    sections: sectionsOf(readFileSync(path.join(GARDEN_DIR, file), "utf8")),
+    sections: sectionsOf(readFileSync(path.join(GARDEN_DIR, file), 'utf8')),
   };
 }
 

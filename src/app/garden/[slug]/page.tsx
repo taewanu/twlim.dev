@@ -1,7 +1,8 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { SectionNav } from "@/app/components/SectionNav";
-import { loadNote, noteSlugs } from "@/lib/garden";
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
+import { SectionNav } from '@/app/components/SectionNav';
+import { loadNote, noteSlugs } from '@/lib/garden';
 
 type Props = { params: Promise<{ slug: string }> };
 
@@ -36,13 +37,11 @@ export async function GardenNote({ params }: Props) {
         >
           ← Index
         </Link>
-        <h1 className="font-serif text-[0.875rem] leading-[1.4rem] tracking-tight">
-          {meta.title}
-        </h1>
+        <h1 className="font-serif text-[0.875rem] leading-[1.4rem] tracking-tight">{meta.title}</h1>
         <p className="mt-1.5 mb-11 text-[0.8125rem] text-muted">
           <Link href="/garden/about" className="capitalize">
             {meta.stage}
-          </Link>{" "}
+          </Link>{' '}
           · Planted {meta.planted} · Tended {meta.tended}
         </p>
         <Content />

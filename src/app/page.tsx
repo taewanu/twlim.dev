@@ -1,72 +1,54 @@
-import Link from "next/link";
-import { loadPlantedNotes } from "@/lib/garden";
-import { LocalTime } from "./components/LocalTime";
+import Link from 'next/link';
+
+import { loadPlantedNotes } from '@/lib/garden';
+
+import { LocalTime } from './components/LocalTime';
 
 export async function Home() {
   const notes = await loadPlantedNotes();
 
   return (
     <main className="mx-auto max-w-xl px-6 py-12 sm:py-20">
-      <h1 className="fade-in font-serif text-3xl font-bold tracking-tight">
-        Taewan Lim
-      </h1>
+      <h1 className="fade-in font-serif text-3xl font-bold tracking-tight">Taewan Lim</h1>
 
       <div
         className="fade-in stagger-1 mt-12 space-y-5 text-base leading-relaxed tracking-tight"
         style={{ fontWeight: 460 }}
       >
+        <p>I was born in Seoul, Korea. Currently, based in Vancouver, Canada.</p>
+
         <p>
-          I was born in Seoul, Korea. Currently, based in Vancouver, Canada.
+          I&apos;m a software developer. Previously at a fintech company in Seoul, where I built
+          internal dashboards, a customer-facing loan site, and{' '}
+          <Link href="/devtools">developer tooling as a VS Code extension</Link>.
         </p>
 
         <p>
-          I&apos;m a software developer. Previously at a fintech company in
-          Seoul, where I built internal dashboards, a customer-facing loan site,
-          and <Link href="/devtools">developer tooling as a VS Code extension</Link>
-          .
+          Before switching to an engineering career, I had a product management background at a food
+          delivery startup in Seoul. It helped me think not just about building features, but why
+          they exist, which is a mindset I still carry.
         </p>
 
         <p>
-          Before switching to an engineering career, I had a product
-          management background at a food delivery startup in Seoul. It helped
-          me think not just about building features, but why they exist, which
-          is a mindset I still carry.
+          I&apos;ve also done a handful of different things. I picked blueberries in Tasmania, made
+          bath bombs at a LUSH factory in Sydney, led beer tours in Seoul, and promoted a Korean
+          theatre team at the Edinburgh Fringe Festival in Scotland.
         </p>
 
         <p>
-          I&apos;ve also done a handful of different things. I picked
-          blueberries in Tasmania, made bath bombs at a LUSH factory in Sydney,
-          led beer tours in Seoul, and promoted a Korean theatre team at the
-          Edinburgh Fringe Festival in Scotland.
-        </p>
-
-        <p>
-          You can also find me on{" "}
-          <a
-            href="https://github.com/taewanu"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          You can also find me on{' '}
+          <a href="https://github.com/taewanu" target="_blank" rel="noopener noreferrer">
             GitHub
           </a>
-          ,{" "}
-          <a
-            href="https://linkedin.com/in/taewanlim"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          ,{' '}
+          <a href="https://linkedin.com/in/taewanlim" target="_blank" rel="noopener noreferrer">
             LinkedIn
-          </a>
-          {" "}and{" "}
-          <a
-            href="https://linktr.ee/wanu"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          </a>{' '}
+          and{' '}
+          <a href="https://linktr.ee/wanu" target="_blank" rel="noopener noreferrer">
             Linktree
           </a>
-          , or reach me via{" "}
-          <a href="mailto:twlim.dev@gmail.com">email</a>.
+          , or reach me via <a href="mailto:twlim.dev@gmail.com">email</a>.
         </p>
       </div>
 
@@ -79,7 +61,7 @@ export async function Home() {
           <li>
             <Link href="/devtools">Lendit Devtools</Link>
             <span className="text-muted">
-              {" "}
+              {' '}
               · VS Code extension for previewing and inspecting app screens
             </span>
           </li>
@@ -95,14 +77,14 @@ export async function Home() {
           <li>
             <Link href="/sounds-abroad">Sounds Abroad</Link>
             <span className="text-muted">
-              {" "}
+              {' '}
               · 3D globe for discovering trending music around the world
             </span>
           </li>
           <li>
             <Link href="/garden/pr-review-agent">PR Review Agent</Link>
             <span className="text-muted">
-              {" "}
+              {' '}
               · An AI agent that reviews my pull requests, including its own
             </span>
           </li>
@@ -144,20 +126,16 @@ export async function Home() {
               Serene
             </a>
             <span className="text-muted">
-              {" "}
+              {' '}
               · Corporate website for a signage design and build company
             </span>
           </li>
           <li>
-            <a
-              href="https://turiya.kr"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://turiya.kr" target="_blank" rel="noopener noreferrer">
               Turiya
             </a>
             <span className="text-muted">
-              {" "}
+              {' '}
               · Shopify store curating works by artists and designers
             </span>
           </li>
@@ -174,20 +152,12 @@ export async function Home() {
             <a href="mailto:twlim.dev@gmail.com">Email</a>
           </li>
           <li>
-            <a
-              href="https://linkedin.com/in/taewanlim"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://linkedin.com/in/taewanlim" target="_blank" rel="noopener noreferrer">
               LinkedIn
             </a>
           </li>
           <li>
-            <a
-              href="https://github.com/taewanu"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
+            <a href="https://github.com/taewanu" target="_blank" rel="noopener noreferrer">
               GitHub
             </a>
           </li>

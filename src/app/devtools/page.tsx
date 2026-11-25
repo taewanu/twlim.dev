@@ -1,22 +1,21 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
-import type { Metadata } from "next";
-import Link from "next/link";
-import { SectionNav } from "@/app/components/SectionNav";
-import Content from "@/content/projects/devtools.mdx";
-import { sectionsOf } from "@/lib/garden";
+import { readFileSync } from 'node:fs';
+import path from 'node:path';
+
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
+import { SectionNav } from '@/app/components/SectionNav';
+import Content from '@/content/projects/devtools.mdx';
+import { sectionsOf } from '@/lib/garden';
 
 export const metadata: Metadata = {
-  title: "Lendit Devtools · Taewan Lim",
+  title: 'Lendit Devtools · Taewan Lim',
   description:
-    "A VS Code extension I built at Lendit to preview and inspect app screens next to their code.",
+    'A VS Code extension I built at Lendit to preview and inspect app screens next to their code.',
 };
 
 const sections = sectionsOf(
-  readFileSync(
-    path.join(process.cwd(), "src/content/projects/devtools.mdx"),
-    "utf8",
-  ),
+  readFileSync(path.join(process.cwd(), 'src/content/projects/devtools.mdx'), 'utf8'),
 );
 
 export function Devtools() {

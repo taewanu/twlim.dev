@@ -1,10 +1,11 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import { loadPlantedNotes } from "@/lib/garden";
+import type { Metadata } from 'next';
+import Link from 'next/link';
+
+import { loadPlantedNotes } from '@/lib/garden';
 
 export const metadata: Metadata = {
-  title: "Garden · Taewan Lim",
-  description: "Unfinished notes on what I am building and learning.",
+  title: 'Garden · Taewan Lim',
+  description: 'Unfinished notes on what I am building and learning.',
 };
 
 export async function Garden() {
@@ -16,18 +17,12 @@ export async function Garden() {
       className="mx-auto max-w-[560px] px-6 pt-20 pb-50 text-[0.875rem] leading-[1.7] tracking-tight"
       style={{ fontWeight: 460 }}
     >
-      <Link
-        href="/"
-        className="-my-3 mb-4 inline-block py-3 pr-3 text-[0.8125rem] text-muted"
-      >
+      <Link href="/" className="-my-3 mb-4 inline-block py-3 pr-3 text-[0.8125rem] text-muted">
         ← Index
       </Link>
-      <h1 className="font-serif text-[0.875rem] leading-[1.4rem] tracking-tight">
-        Garden
-      </h1>
+      <h1 className="font-serif text-[0.875rem] leading-[1.4rem] tracking-tight">Garden</h1>
       <p className="mt-1.5 mb-11 text-[0.8125rem] text-muted">
-        Notes that are unfinished on purpose.{" "}
-        <Link href="/garden/about">How to read them.</Link>
+        Notes that are unfinished on purpose. <Link href="/garden/about">How to read them.</Link>
       </p>
 
       {topics.map((topic) => (

@@ -2,9 +2,6 @@
   "name": "twlim-dev",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-    "node": ">=22.0.0"
-  },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -39,5 +36,8 @@
     "tailwindcss": "^4.3.3",
     "typescript": "^6.0.3",
     "vite-plus": "^1.8.0"
+  },
+  "engines": {
+    "node": ">=22.0.0"
   }
 }
