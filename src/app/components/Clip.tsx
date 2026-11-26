@@ -4,7 +4,7 @@ import { useEffect, useRef } from 'react';
 
 import { prefersReducedMotion } from '@/lib/motion';
 
-// Loops like a GIF, but holds still for reduced motion and pauses on tap.
+// Loops like a GIF while on screen, but holds still for reduced motion and pauses on tap.
 export function Clip({
   src,
   poster,
@@ -19,16 +19,25 @@ export function Clip({
   height?: number;
 }) {
   const ref = useRef<HTMLVideoElement>(null);
+  const pausedByReader = useRef(false);
   const size = height > width * 1.5 ? 'w-[240px]' : 'w-full';
 
+  // A closed article panel stays mounted, so its clips would otherwise keep playing out of sight.
   useEffect(() => {
-    if (prefersReducedMotion()) return;
-    ref.current?.play().catch(() => {});
+    const video = ref.current;
+    if (!video || prefersReducedMotion()) return undefined;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (!entry?.isIntersecting) video.pause();
+      else if (!pausedByReader.current) video.play().catch(() => {});
+    });
+    observer.observe(video);
+    return () => observer.disconnect();
   }, []);
 
   function toggle() {
     const video = ref.current;
     if (!video) return;
+    pausedByReader.current = !video.paused;
     if (video.paused) video.play().catch(() => {});
     else video.pause();
   }

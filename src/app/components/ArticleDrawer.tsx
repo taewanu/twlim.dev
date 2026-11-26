@@ -4,9 +4,10 @@ import { Dialog } from '@base-ui/react/dialog';
 import { Toggle } from '@base-ui/react/toggle';
 import { Volume2, VolumeX, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { type ReactNode, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
+import { type ReactNode, useLayoutEffect, useRef, useState } from 'react';
 
 import { useDrawerDrag } from '@/hooks/use-drawer-drag';
+import { useHydrated } from '@/hooks/use-hydrated';
 import { useTickSound } from '@/hooks/use-tick-sound';
 import { useTouchSwipe } from '@/hooks/use-touch-swipe';
 import { useTrackpadSwipe } from '@/hooks/use-trackpad-swipe';
@@ -22,8 +23,6 @@ const SCROLLER =
 const CHROME_BUTTON =
   'flex size-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-code-bg hover:text-text focus-visible:outline-1 focus-visible:outline-muted';
 
-const noSubscription = () => () => {};
-
 // Back is safe only when that index page is the entry behind; before a direct visit it would leave the site.
 function isBehind(pathname: string) {
   if (typeof navigation === 'undefined' || !navigation.currentEntry) return false;
@@ -38,11 +37,7 @@ function isBehind(pathname: string) {
 export function ArticleDrawer({ article, children }: { article: ReactNode; children: ReactNode }) {
   const pathname = usePathname();
   const router = useRouter();
-  const hydrated = useSyncExternalStore(
-    noSubscription,
-    () => true,
-    () => false,
-  );
+  const hydrated = useHydrated();
   const onIndex = isIndexPage(pathname);
   const [route, setRoute] = useState({
     pathname,
@@ -60,7 +55,6 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     setOpen(!onIndex);
   }
   const [remembered, setRemembered] = useState<ReactNode>(null);
-  const content = onIndex ? remembered : article;
 
   const indexRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -107,14 +101,13 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
         {children}
       </div>
 
-      {/* Base UI portals render only in the browser, so a direct visit gets the open panel as plain HTML first. */}
-      {!hydrated && open && (
-        <div className={PANEL}>
-          <div ref={fallbackRef} className={SCROLLER}>
-            {content}
-          </div>
+      {/* Base UI portals render only in the browser, so a direct visit gets the open panel as plain HTML first.
+          The slot always renders here, so Next never remounts it; after hydration it only reports to the dialog. */}
+      <div className={!hydrated && open ? PANEL : 'hidden'}>
+        <div ref={fallbackRef} className={SCROLLER}>
+          {article}
         </div>
-      )}
+      </div>
 
       {hydrated && (
         <Dialog.Root
@@ -123,7 +116,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
             if (!next) close();
           }}
         >
-          <Dialog.Portal>
+          <Dialog.Portal keepMounted>
             <Dialog.Backdrop className="fixed inset-0 cursor-w-resize" />
             <Dialog.Popup
               ref={panelRef}
@@ -143,7 +136,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
                 tabIndex={-1}
                 className={SCROLLER}
               >
-                {content}
+                {remembered}
               </div>
 
               <div className="absolute top-4 right-4 flex gap-1">

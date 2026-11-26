@@ -2,14 +2,17 @@
 
 import { createContext, type ReactNode, use, useLayoutEffect } from 'react';
 
+import { useHydrated } from '@/hooks/use-hydrated';
+
 export const RememberArticleContext = createContext<(article: ReactNode) => void>(() => {});
 
 /**
- * Hands the rendered article to the drawer, which keeps showing this copy on an index page (where
- * the @article slot is empty) while the panel slides out or is swiped back.
+ * Hands the article to the drawer, which renders it in one place through every navigation so its
+ * scroll and media survive. Before hydration it renders in place as the plain HTML panel.
  */
 export function RememberArticle({ children }: { children: ReactNode }) {
   const remember = use(RememberArticleContext);
+  const hydrated = useHydrated();
   useLayoutEffect(() => remember(children), [remember, children]);
-  return children;
+  return hydrated ? null : children;
 }
