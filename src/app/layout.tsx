@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import { Source_Sans_3, Lora } from 'next/font/google';
 
 import './globals.css';
@@ -18,6 +18,14 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://twlim.dev'),
   title: 'Taewan Lim',
   description: 'Software Developer',
+};
+
+// Mirrors --color-bg in globals.css, since a meta tag can't read a CSS variable.
+export const viewport: Viewport = {
+  themeColor: [
+    { media: '(prefers-color-scheme: light)', color: '#fdfdfc' },
+    { media: '(prefers-color-scheme: dark)', color: '#1b1917' },
+  ],
 };
 
 export function RootLayout({
