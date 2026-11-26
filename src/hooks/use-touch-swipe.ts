@@ -8,7 +8,7 @@ const COMMIT_PROGRESS = 1 / 3;
 // The browser's own back gesture starts at the left edge.
 const BACK_GESTURE_EDGE = 24;
 
-/** Drags the article right to close it, or the index left to bring the last article back. */
+/** Drags the article right to close it, or an index row left to open its article (empty space reopens the last one). */
 export function useTouchSwipe(drag: DrawerDrag, enabled: boolean) {
   useEffect(() => {
     if (!enabled) return undefined;
@@ -16,6 +16,7 @@ export function useTouchSwipe(drag: DrawerDrag, enabled: boolean) {
       x: number;
       y: number;
       closing: boolean;
+      row: HTMLElement | null;
       axis: 'x' | 'y' | null;
       progress: number;
       speed: number;
@@ -25,10 +26,15 @@ export function useTouchSwipe(drag: DrawerDrag, enabled: boolean) {
       if (event.pointerType !== 'touch' || event.clientX < BACK_GESTURE_EDGE) return;
       if (event.target instanceof Element && event.target.closest('[data-swipe-ignore], pre'))
         return;
+      const closing = drag.isOpen();
       swipe = {
         x: event.clientX,
         y: event.clientY,
-        closing: drag.isOpen(),
+        closing,
+        row:
+          !closing && event.target instanceof Element
+            ? event.target.closest<HTMLElement>('[data-swipe-article]')
+            : null,
         axis: null,
         progress: 0,
         speed: 0,
@@ -49,7 +55,11 @@ export function useTouchSwipe(drag: DrawerDrag, enabled: boolean) {
       }
       const travel = Math.max(0, swipe.closing ? dx : -dx);
       if (travel === 0 && swipe.progress === 0) return;
-      ({ progress: swipe.progress, speed: swipe.speed } = drag.move(travel, event.timeStamp));
+      ({ progress: swipe.progress, speed: swipe.speed } = drag.move(
+        travel,
+        event.timeStamp,
+        swipe.row,
+      ));
     }
 
     function onUp() {

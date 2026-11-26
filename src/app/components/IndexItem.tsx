@@ -1,7 +1,9 @@
 import type { ComponentProps, ReactNode } from 'react';
 
+import { opensInDrawer } from '@/lib/article';
 import { cn } from '@/lib/utils';
 
+import { LastReadDot } from './LastReadDot';
 import { TextLink } from './TextLink';
 
 export function IndexItem({
@@ -21,9 +23,19 @@ export function IndexItem({
   linkProps?: Omit<ComponentProps<'a'>, 'href' | 'children'>;
   children?: ReactNode;
 }) {
+  const swipeable = opensInDrawer(href);
   return (
-    <li className={cn(aside ? 'flex justify-between gap-6' : undefined, className)}>
+    <li
+      data-swipe-article={swipeable ? href : undefined}
+      className={cn(
+        // While another row is swiped open, this one steps back; the drawer sets these attributes.
+        'transition-opacity duration-150 in-data-swipe-arming:not-data-swipe-armed:opacity-35',
+        aside && 'flex justify-between gap-6',
+        className,
+      )}
+    >
       <span>
+        {swipeable && <LastReadDot href={href} />}
         <TextLink href={href} {...linkProps}>
           {title}
         </TextLink>

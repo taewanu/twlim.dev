@@ -4,15 +4,18 @@ import { Dialog } from '@base-ui/react/dialog';
 import { Toggle } from '@base-ui/react/toggle';
 import { Volume2, VolumeX, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { type ReactNode, useLayoutEffect, useRef, useState } from 'react';
+import { type ReactNode, useCallback, useLayoutEffect, useRef, useState } from 'react';
 
 import { useDrawerDrag } from '@/hooks/use-drawer-drag';
 import { useHydrated } from '@/hooks/use-hydrated';
+import { markSwipeLearned, useSwipeHint } from '@/hooks/use-swipe-hint';
 import { useTickSound } from '@/hooks/use-tick-sound';
 import { useTouchSwipe } from '@/hooks/use-touch-swipe';
 import { useTrackpadSwipe } from '@/hooks/use-trackpad-swipe';
 import { ARTICLE_TITLE_ID, isIndexPage } from '@/lib/article';
 
+import { ArticleBody } from './ArticleBody';
+import { LastReadContext } from './LastReadDot';
 import { RememberArticleContext } from './RememberArticle';
 import { SectionScrubber } from './SectionScrubber';
 
@@ -55,6 +58,12 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     setOpen(!onIndex);
   }
   const [remembered, setRemembered] = useState<ReactNode>(null);
+  // A row swiped open before its article has loaded shows just its title until the page arrives.
+  const [preview, setPreview] = useState<{ href: string; title: string } | null>(null);
+  const remember = useCallback((node: ReactNode) => {
+    setRemembered(node);
+    setPreview(null);
+  }, []);
 
   const indexRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -66,6 +75,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     handoffScroll.current = fallbackRef.current?.scrollTop ?? 0;
   }, []);
   const sound = useTickSound();
+  useSwipeHint(indexRef, onIndex);
 
   function goToIndex() {
     if (isBehind(route.index)) router.back();
@@ -82,23 +92,31 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     panelRef,
     indexRef,
     setOpen,
-    onCommit: (closed) => {
-      if (closed) goToIndex();
-      else if (route.lastArticle) router.push(route.lastArticle, { scroll: false });
+    onOpenStart: (row) => {
+      const href = row?.dataset.swipeArticle ?? route.lastArticle;
+      if (!href) return false;
+      const title = row?.querySelector('a')?.textContent ?? '';
+      setPreview(href === route.lastArticle ? null : { href, title });
+      return true;
+    },
+    onCommit: (closed, row) => {
+      if (closed) return goToIndex();
+      markSwipeLearned();
+      const href = row?.dataset.swipeArticle ?? route.lastArticle;
+      if (href) router.push(href, { scroll: false });
     },
   });
-  const canSwipe = hydrated && (open || route.lastArticle !== null);
-  useTouchSwipe(drag, canSwipe);
-  useTrackpadSwipe(drag, canSwipe);
+  useTouchSwipe(drag, hydrated);
+  useTrackpadSwipe(drag, hydrated);
 
   return (
-    <RememberArticleContext value={setRemembered}>
+    <RememberArticleContext value={remember}>
       <div
         ref={indexRef}
         data-open={open ? '' : undefined}
         className="touch-pan-y touch-pinch-zoom transition-[translate,opacity] duration-(--duration-drawer) ease-drawer [--index-shift:calc(var(--spacing-peek)-(100vw+min(var(--container-xl),100vw))/2)] motion-reduce:transition-none data-open:translate-x-(--index-shift) data-open:opacity-(--index-opacity)"
       >
-        {children}
+        <LastReadContext value={open ? null : route.lastArticle}>{children}</LastReadContext>
       </div>
 
       {/* Base UI portals render only in the browser, so a direct visit gets the open panel as plain HTML first.
@@ -139,6 +157,13 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
                 {remembered}
               </div>
 
+              {/* Covers the last article instead of replacing it, so a swipe that springs back keeps it mounted. */}
+              {preview && (
+                <div className="absolute inset-0 overflow-hidden bg-bg">
+                  <ArticleBody title={preview.title} titleId={null} />
+                </div>
+              )}
+
               <div className="absolute top-4 right-4 flex gap-1">
                 <Toggle
                   pressed={sound.enabled}
@@ -153,11 +178,13 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
                 </Dialog.Close>
               </div>
 
-              <SectionScrubber
-                key={`scrubber:${route.lastArticle}`}
-                scrollerRef={scrollerRef}
-                onSnap={() => sound.play()}
-              />
+              {!preview && (
+                <SectionScrubber
+                  key={`scrubber:${route.lastArticle}`}
+                  scrollerRef={scrollerRef}
+                  onSnap={() => sound.play()}
+                />
+              )}
             </Dialog.Popup>
           </Dialog.Portal>
         </Dialog.Root>

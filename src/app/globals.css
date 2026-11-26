@@ -77,7 +77,8 @@ a {
   transition: text-decoration-color 0.15s;
 }
 
-a:hover {
+a:hover,
+[data-swipe-armed] a {
   text-decoration-color: var(--color-text);
 }
 

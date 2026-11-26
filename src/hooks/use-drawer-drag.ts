@@ -15,8 +15,13 @@ type Options = {
   panelRef: RefObject<HTMLElement | null>;
   indexRef: RefObject<HTMLElement | null>;
   setOpen: (open: boolean) => void;
-  onCommit: (closed: boolean) => void;
+  /** An opening swipe is starting on `row`, or on empty space; false means there is nothing to open. */
+  onOpenStart: (row: HTMLElement | null) => boolean;
+  onCommit: (closed: boolean, row: HTMLElement | null) => void;
 };
+
+// How far a swiped row leans out ahead of the index; it eases into this, so it never races the panel.
+const ROW_LEAN = 56;
 
 export type DrawerDrag = ReturnType<typeof createDrawerDrag>;
 
@@ -32,8 +37,15 @@ function releaseTransition(remaining: number, speed: number) {
 
 function createDrawerDrag(initial: Options) {
   let current = initial;
-  let drag: { closing: boolean; travel: number; speed: number; time: number } | null = null;
+  let drag: {
+    closing: boolean;
+    row: HTMLElement | null;
+    travel: number;
+    speed: number;
+    time: number;
+  } | null = null;
   let settle: ReturnType<typeof setTimeout> | undefined;
+  let leaning: HTMLElement | null = null;
 
   const layers = () => {
     const { panelRef, indexRef } = current;
@@ -50,6 +62,21 @@ function createDrawerDrag(initial: Options) {
     }
   }
 
+  // The swiped row leans out and lights up while the other rows step back (styled through these attributes).
+  function arm(row: HTMLElement) {
+    current.indexRef.current?.setAttribute('data-swipe-arming', '');
+    row.setAttribute('data-swipe-armed', '');
+    row.style.transition = 'none';
+    leaning = row;
+  }
+
+  function disarm(row: HTMLElement, ms: number) {
+    current.indexRef.current?.removeAttribute('data-swipe-arming');
+    row.removeAttribute('data-swipe-armed');
+    row.style.transition = `translate ${ms}ms var(--ease-drawer)`;
+    row.style.translate = '';
+  }
+
   return {
     /** The open state from the latest render, for gesture handlers that outlive it. */
     isOpen: () => current.open,
@@ -59,28 +86,42 @@ function createDrawerDrag(initial: Options) {
       current = next;
     },
 
-    /** Moves the panel `travel` px toward the drawer's other state; the first call starts the drag. */
-    move(travel: number, time: number) {
+    /**
+     * Moves the panel `travel` px toward the drawer's other state; the first call starts the drag.
+     * An opening drag opens the article of the `row` it started on, or the last article on empty space.
+     */
+    move(travel: number, time: number, row: HTMLElement | null = null) {
       if (!drag) {
-        const { open, setOpen } = current;
-        // Opening has to mount the panel before it can follow the finger.
-        if (!open) flushSync(() => setOpen(true));
+        const { open, setOpen, onOpenStart } = current;
+        if (!open) {
+          let canOpen = false;
+          // Opening has to mount the panel, showing what it opens, before it can follow the finger.
+          flushSync(() => {
+            canOpen = onOpenStart(row);
+            if (canOpen) setOpen(true);
+          });
+          if (!canOpen) return { progress: 0, speed: 0 };
+        }
         clearTimeout(settle);
+        if (leaning) leaning.style.transition = '';
         for (const el of layers()) el.style.transition = 'none';
-        drag = { closing: open, travel: 0, speed: 0, time: time - 16 };
+        drag = { closing: open, row: open ? null : row, travel: 0, speed: 0, time: time - 16 };
+        if (drag.row) arm(drag.row);
       }
       drag.speed = (travel - drag.travel) / Math.max(1, time - drag.time);
       drag.travel = travel;
       drag.time = time;
       const progress = Math.min(1, travel / innerWidth);
       paint(drag.closing ? 1 - progress : progress);
+      if (drag.row)
+        drag.row.style.translate = `${-ROW_LEAN * (1 - Math.exp(-travel / ROW_LEAN))}px`;
       return { progress, speed: drag.speed };
     },
 
     /** Lets go: `commit` finishes the swipe, otherwise the panel springs back. */
     end(commit: boolean) {
       if (!drag) return;
-      const { closing, travel, speed } = drag;
+      const { closing, row, travel, speed } = drag;
       drag = null;
       const progress = Math.min(1, travel / innerWidth);
       const remaining = Math.max(1, (commit ? 1 - progress : progress) * innerWidth);
@@ -93,10 +134,13 @@ function createDrawerDrag(initial: Options) {
         el.style.translate = '';
         el.style.opacity = '';
       }
+      if (row) disarm(row, release.ms);
       settle = setTimeout(() => {
         for (const el of layers()) el.style.transition = '';
+        if (leaning) leaning.style.transition = '';
+        leaning = null;
       }, release.ms + 50);
-      if (commit) onCommit(closing);
+      if (commit) onCommit(closing, row);
     },
   };
 }
