@@ -2,15 +2,27 @@
 @import 'tw-animate-css';
 @import 'shadcn/tailwind.css';
 
-@custom-variant dark (&:is(.dark *));
-
-@theme inline {
+@theme {
   --color-bg: #fdfdfc;
   --color-text: #2c2926;
-  --color-muted: #9b9590;
+  --color-muted: #7a746f;
   --color-underline: #e5e1de;
   --color-subtle: #6f6a64;
   --color-code-bg: #f4f2ef;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #1b1917;
+    --color-text: #ebe7e2;
+    --color-muted: #87817b;
+    --color-underline: #3a3632;
+    --color-subtle: #b2aca5;
+    --color-code-bg: #262320;
+  }
+}
+
+@theme inline {
   --text-meta: 0.8125rem;
   --text-article: 0.875rem;
   --text-article--line-height: 1.7;
@@ -113,6 +125,7 @@ code {
 }
 
 :root {
+  color-scheme: light dark;
   --background: var(--color-bg);
   --foreground: var(--color-text);
   --card: var(--color-bg);
