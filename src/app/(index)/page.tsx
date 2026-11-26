@@ -1,12 +1,12 @@
+import { IndexItem } from '@/app/components/IndexItem';
+import { IndexList } from '@/app/components/IndexList';
+import { IndexSection } from '@/app/components/IndexSection';
+import { LocalTime } from '@/app/components/LocalTime';
+import { PreviewItem } from '@/app/components/PreviewItem';
+import { TextLink } from '@/app/components/TextLink';
 import { loadPlantedNotes } from '@/lib/garden';
 
-import { IndexItem } from './components/IndexItem';
-import { IndexList } from './components/IndexList';
-import { IndexSection } from './components/IndexSection';
-import { LocalTime } from './components/LocalTime';
-import { PreviewItem } from './components/PreviewItem';
-import { TextLink } from './components/TextLink';
-
+// Stays mounted under an open article: on client navigation, Next keeps the active page of this slot.
 export async function Home() {
   const notes = await loadPlantedNotes();
 
