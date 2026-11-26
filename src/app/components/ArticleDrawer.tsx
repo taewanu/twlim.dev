@@ -24,6 +24,13 @@ const CHROME_BUTTON =
 
 const noSubscription = () => () => {};
 
+// Back is safe only when the index is the entry behind; before a direct visit it would leave the site.
+function indexIsBehind() {
+  if (typeof navigation === 'undefined' || !navigation.currentEntry) return false;
+  const behind = navigation.entries()[navigation.currentEntry.index - 1];
+  return behind?.url ? new URL(behind.url).pathname === '/' : false;
+}
+
 /**
  * Opens an article as a centered panel over the index, which slides left until only its right
  * edge shows. The URL decides what is open; gestures and the close button navigate.
@@ -38,7 +45,6 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
   );
   const [route, setRoute] = useState({
     pathname,
-    previous: null as string | null,
     lastArticle: pathname === '/' ? null : pathname,
   });
   // Follows the URL, but flips ahead of a navigation so the slide starts without waiting for it.
@@ -46,7 +52,6 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
   if (route.pathname !== pathname) {
     setRoute({
       pathname,
-      previous: route.pathname,
       lastArticle: pathname === '/' ? route.lastArticle : pathname,
     });
     setOpen(pathname !== '/');
@@ -60,7 +65,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
   const sound = useTickSound();
 
   function goHome() {
-    if (route.previous === '/') router.back();
+    if (indexIsBehind()) router.back();
     else router.push('/', { scroll: false });
   }
 
