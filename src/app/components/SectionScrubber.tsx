@@ -102,7 +102,8 @@ export function SectionScrubber({
         vibrateTick();
       }
     }
-    if (dragging.current) scroller.scrollTop = next.pos;
+    // A press without movement is a click, which scrolls smoothly on release.
+    if (dragging.current && moved.current) scroller.scrollTop = next.pos;
   }
 
   function release(event: PointerEvent) {
