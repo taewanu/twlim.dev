@@ -47,6 +47,9 @@ function createDrawerDrag(initial: Options) {
   }
 
   return {
+    /** The open state from the latest render, for gesture handlers that outlive it. */
+    isOpen: () => current.open,
+
     /** Keeps the latest state and callbacks without restarting a gesture in progress. */
     update(next: Options) {
       current = next;

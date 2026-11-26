@@ -16,9 +16,11 @@
   --text-article--line-height: 1.7;
   --text-heading: 0.875rem;
   --text-heading--line-height: 1.4rem;
+  --text-tip-touch: 0.9375rem;
   --font-weight-reading: 460;
   --spacing-block: 1.1rem;
   --container-article: 560px;
+  --spacing-tick: 1.5px;
   --font-serif: var(--font-lora);
   --font-sans: var(--font-source-sans);
   --font-heading: var(--font-serif);
