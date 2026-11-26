@@ -1,9 +1,11 @@
-import Link from 'next/link';
-
 import { loadPlantedNotes } from '@/lib/garden';
 
+import { IndexItem } from './components/IndexItem';
+import { IndexList } from './components/IndexList';
+import { IndexSection } from './components/IndexSection';
 import { LocalTime } from './components/LocalTime';
 import { PreviewItem } from './components/PreviewItem';
+import { TextLink } from './components/TextLink';
 
 export async function Home() {
   const notes = await loadPlantedNotes();
@@ -18,7 +20,7 @@ export async function Home() {
         <p>
           I&apos;m a software developer. Previously at a fintech company in Seoul, where I built
           internal dashboards, a customer-facing loan site, and{' '}
-          <Link href="/devtools">developer tooling as a VS Code extension</Link>.
+          <TextLink href="/devtools">developer tooling as a VS Code extension</TextLink>.
         </p>
 
         <p>
@@ -34,25 +36,15 @@ export async function Home() {
         </p>
 
         <p>
-          You can also find me on{' '}
-          <a href="https://github.com/taewanu" target="_blank" rel="noopener noreferrer">
-            GitHub
-          </a>
-          ,{' '}
-          <a href="https://linkedin.com/in/taewanlim" target="_blank" rel="noopener noreferrer">
-            LinkedIn
-          </a>{' '}
-          and{' '}
-          <a href="https://linktr.ee/wanu" target="_blank" rel="noopener noreferrer">
-            Linktree
-          </a>
-          , or reach me via <a href="mailto:twlim.dev@gmail.com">email</a>.
+          You can also find me on <TextLink href="https://github.com/taewanu">GitHub</TextLink>,{' '}
+          <TextLink href="https://linkedin.com/in/taewanlim">LinkedIn</TextLink> and{' '}
+          <TextLink href="https://linktr.ee/wanu">Linktree</TextLink>, or reach me via{' '}
+          <TextLink href="mailto:twlim.dev@gmail.com">email</TextLink>.
         </p>
       </div>
 
-      <section className="fade-in stagger-2 mt-12">
-        <h2 className="font-serif text-lg font-bold">Experience</h2>
-        <ul className="mt-4 space-y-3 text-base leading-relaxed tracking-tight font-reading">
+      <IndexSection title="Experience" stagger={2}>
+        <IndexList>
           <PreviewItem
             href="/devtools"
             title="Lendit Devtools"
@@ -64,12 +56,11 @@ export async function Home() {
               height: 754,
             }}
           />
-        </ul>
-      </section>
+        </IndexList>
+      </IndexSection>
 
-      <section className="fade-in stagger-3 mt-12">
-        <h2 className="font-serif text-lg font-bold">Projects</h2>
-        <ul className="mt-4 space-y-3 text-base leading-relaxed tracking-tight font-reading">
+      <IndexSection title="Projects" stagger={3}>
+        <IndexList>
           <PreviewItem
             href="/sounds-abroad"
             title="Sounds Abroad"
@@ -81,75 +72,52 @@ export async function Home() {
               height: 844,
             }}
           />
-          <li>
-            <Link href="/garden/pr-review-agent">PR Review Agent</Link>
-            <span className="text-muted">
-              {' '}
-              · An AI agent that reviews my pull requests, including its own
-            </span>
-          </li>
-        </ul>
-      </section>
+          <IndexItem
+            href="/garden/pr-review-agent"
+            title="PR Review Agent"
+            summary="An AI agent that reviews my pull requests, including its own"
+          />
+        </IndexList>
+      </IndexSection>
 
-      <section className="fade-in stagger-4 mt-12">
-        <h2 className="font-serif text-lg font-bold">
-          <Link href="/garden">Garden</Link>
-        </h2>
-        <ul className="mt-4 space-y-3 text-base leading-relaxed tracking-tight font-reading">
+      <IndexSection title={<TextLink href="/garden">Garden</TextLink>} stagger={4}>
+        <IndexList>
           {notes.map(({ slug, meta }) => (
-            <li key={slug} className="flex justify-between gap-6">
-              <span>
-                <Link href={`/garden/${slug}`}>{meta.title}</Link>
-                <span className="text-muted capitalize"> · {meta.stage}</span>
-              </span>
-              <span className="shrink-0 text-muted">{meta.tended}</span>
-            </li>
+            <IndexItem
+              key={slug}
+              href={`/garden/${slug}`}
+              title={meta.title}
+              summary={<span className="capitalize">{meta.stage}</span>}
+              aside={meta.tended}
+            />
           ))}
-        </ul>
-      </section>
+        </IndexList>
+      </IndexSection>
 
-      <section className="fade-in stagger-5 mt-12">
-        <h2 className="font-serif text-lg font-bold">Client Works</h2>
-        <ul className="mt-4 space-y-3 text-base leading-relaxed tracking-tight font-reading">
-          <li>
-            <a
-              href="https://renewal.serene-renewal.pages.dev"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Serene
-            </a>
-            <span className="text-muted">
-              {' '}
-              · Corporate website for a signage design and build company
-            </span>
-          </li>
-          <li>
-            <a href="https://turiya.kr" target="_blank" rel="noopener noreferrer">
-              Turiya
-            </a>
-            <span className="text-muted">
-              {' '}
-              · Shopify store curating works by artists and designers
-            </span>
-          </li>
-        </ul>
-      </section>
+      <IndexSection title="Client Works" stagger={5}>
+        <IndexList>
+          <IndexItem
+            href="https://renewal.serene-renewal.pages.dev"
+            title="Serene"
+            summary="Corporate website for a signage design and build company"
+          />
+          <IndexItem
+            href="https://turiya.kr"
+            title="Turiya"
+            summary="Shopify store curating works by artists and designers"
+          />
+        </IndexList>
+      </IndexSection>
 
-      <section className="fade-in stagger-6 mt-12">
-        <h2 className="font-serif text-lg font-bold">Contact</h2>
-        <p className="mt-4 text-base leading-relaxed tracking-tight font-reading">
-          <a href="mailto:twlim.dev@gmail.com">Email</a>
+      <IndexSection title="Contact" stagger={6}>
+        <p>
+          <TextLink href="mailto:twlim.dev@gmail.com">Email</TextLink>
           <span className="text-muted"> · </span>
-          <a href="https://linkedin.com/in/taewanlim" target="_blank" rel="noopener noreferrer">
-            LinkedIn
-          </a>
+          <TextLink href="https://linkedin.com/in/taewanlim">LinkedIn</TextLink>
           <span className="text-muted"> · </span>
-          <a href="https://github.com/taewanu" target="_blank" rel="noopener noreferrer">
-            GitHub
-          </a>
+          <TextLink href="https://github.com/taewanu">GitHub</TextLink>
         </p>
-      </section>
+      </IndexSection>
 
       <footer className="fade-in stagger-7 mt-12 flex justify-end">
         <LocalTime />

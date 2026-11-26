@@ -1,9 +1,10 @@
 'use client';
 
-import Link from 'next/link';
 import { useRef } from 'react';
 
 import { prefersReducedMotion } from '@/lib/motion';
+
+import { IndexItem } from './IndexItem';
 
 const VIEWPORT_GAP = 24;
 
@@ -24,7 +25,7 @@ export function PreviewItem({
 
   function show() {
     const el = video.current;
-    const item = el?.parentElement;
+    const item = el?.closest('li');
     if (!el || !item) return;
     const { top, bottom } = item.getBoundingClientRect();
     const roomBelow = window.innerHeight - VIEWPORT_GAP - top;
@@ -41,18 +42,19 @@ export function PreviewItem({
   }
 
   return (
-    <li className="relative">
-      <Link
-        href={href}
-        className="peer"
-        onMouseEnter={show}
-        onMouseLeave={hide}
-        onFocus={show}
-        onBlur={hide}
-      >
-        {title}
-      </Link>
-      <span className="text-muted"> · {summary}</span>
+    <IndexItem
+      href={href}
+      title={title}
+      summary={summary}
+      className="relative"
+      linkProps={{
+        className: 'peer',
+        onMouseEnter: show,
+        onMouseLeave: hide,
+        onFocus: show,
+        onBlur: hide,
+      }}
+    >
       <video
         ref={video}
         src={clip.src}
@@ -66,6 +68,6 @@ export function PreviewItem({
         aria-hidden="true"
         className="pointer-events-none absolute top-0 left-full ml-12 hidden max-h-72 w-auto max-w-64 rounded-lg border border-underline opacity-0 transition-opacity duration-200 peer-hover:opacity-100 peer-focus-visible:opacity-100 xl:block"
       />
-    </li>
+    </IndexItem>
   );
 }
