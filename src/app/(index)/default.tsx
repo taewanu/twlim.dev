@@ -1,6 +1,4 @@
-// Article URLs have no page in this slot; the index lives in the layout.
-export function IndexDefault() {
-  return null;
-}
+import { Home } from './page';
 
-export default IndexDefault;
+// A direct visit to an article has no page behind it, so the index fills in.
+export default Home;
