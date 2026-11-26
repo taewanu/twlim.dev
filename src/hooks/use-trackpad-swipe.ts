@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import { stepTrackpad, type TrackpadGesture } from '@/lib/trackpad-gesture';
 
@@ -8,15 +8,7 @@ import type { DrawerDrag } from './use-drawer-drag';
 const GESTURE_GAP_MS = 150;
 
 /** A two-finger horizontal swipe drives the same drag as touch; wheel events are all a trackpad sends. */
-export function useTrackpadSwipe(
-  drag: DrawerDrag,
-  { enabled, open }: { enabled: boolean; open: boolean },
-) {
-  const openRef = useRef(open);
-  useEffect(() => {
-    openRef.current = open;
-  });
-
+export function useTrackpadSwipe(drag: DrawerDrag, enabled: boolean) {
   useEffect(() => {
     if (!enabled) return undefined;
     let gesture: TrackpadGesture | null = null;
@@ -25,7 +17,7 @@ export function useTrackpadSwipe(
     function onWheel(event: WheelEvent) {
       if (event.target instanceof Element && event.target.closest('pre')) return;
       const commitAt = Math.min(innerWidth / 3, 200);
-      const [next, step] = stepTrackpad(gesture, event, { open: openRef.current, commitAt });
+      const [next, step] = stepTrackpad(gesture, event, { open: drag.isOpen(), commitAt });
       gesture = next;
 
       clearTimeout(idle);

@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
 
-import { RememberArticle } from './RememberArticle';
+import { ARTICLE_TITLE_ID } from '@/lib/article';
 
-export const ARTICLE_TITLE_ID = 'article-title';
+import { RememberArticle } from './RememberArticle';
 
 export function Article({
   title,

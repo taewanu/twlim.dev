@@ -1,8 +1,3 @@
-/** Android: the Vibration API, callable from code on every snap. */
-export function vibrateTick() {
-  navigator.vibrate?.(4);
-}
-
 /**
  * iOS has no vibration API, but Safari taps the Taptic Engine when a person toggles a switch input.
  * A script's click() doesn't count, so this transparent label over the parent turns the person's

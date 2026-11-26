@@ -2,15 +2,19 @@
 
 import { type PointerEvent, type RefObject, useEffect, useRef, useState } from 'react';
 
+import { vibrateTick } from '@/lib/haptics';
 import { cn } from '@/lib/utils';
 
-import { HapticSwitch, vibrateTick } from './HapticSwitch';
+import { HapticSwitch } from './HapticSwitch';
 
 const MINOR_STEP = 9;
 const MAJOR_CLEARANCE = 4;
 const HEADING_OFFSET = 24;
 const LIFT = 12;
 const LIFT_SIGMA = 22;
+const MAJOR_WIDTH = 16;
+const MINOR_WIDTH = 7;
+const CURRENT_WIDTH = 22;
 
 type Tick = { key: string; pos: number; y: number; major: boolean };
 type Section = { pos: number; label: string };
@@ -145,7 +149,7 @@ export function SectionScrubber({
     >
       {ticks.map((tick) => {
         const isCurrent = tick === current;
-        const base = tick.major ? 16 : 7;
+        const base = tick.major ? MAJOR_WIDTH : MINOR_WIDTH;
         const lift =
           pointerY === null
             ? 0
@@ -158,10 +162,13 @@ export function SectionScrubber({
             key={tick.key}
             className={cn(
               'pointer-events-none absolute right-0 -translate-y-1/2 rounded-full transition-[width,background-color] duration-100 ease-out',
-              isCurrent ? 'h-0.5' : 'h-[1.5px]',
+              isCurrent ? 'h-0.5' : 'h-tick',
               color,
             )}
-            style={{ top: tick.y, width: (isCurrent ? Math.max(base, 22) : base) + lift }}
+            style={{
+              top: tick.y,
+              width: (isCurrent ? Math.max(base, CURRENT_WIDTH) : base) + lift,
+            }}
           />
         );
       })}
@@ -171,7 +178,7 @@ export function SectionScrubber({
           className={cn(
             'pointer-events-none absolute right-full mr-2.5 -translate-y-1/2 rounded-sm bg-bg px-2 py-0.5 text-meta whitespace-nowrap text-text outline outline-underline',
             // Under a finger, lift the label up and away from the thumb and make it bigger.
-            touch && 'mr-3 -translate-y-[calc(50%+--spacing(8))] px-3 py-1.5 text-[15px]',
+            touch && 'mr-3 -translate-y-[calc(50%+--spacing(8))] px-3 py-1.5 text-tip-touch',
           )}
           style={{ top: snapped.y }}
         >

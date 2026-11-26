@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect } from 'react';
 
 import type { DrawerDrag } from './use-drawer-drag';
 
@@ -9,15 +9,7 @@ const COMMIT_PROGRESS = 1 / 3;
 const BACK_GESTURE_EDGE = 24;
 
 /** Drags the article right to close it, or the index left to bring the last article back. */
-export function useTouchSwipe(
-  drag: DrawerDrag,
-  { enabled, open }: { enabled: boolean; open: boolean },
-) {
-  const openRef = useRef(open);
-  useEffect(() => {
-    openRef.current = open;
-  });
-
+export function useTouchSwipe(drag: DrawerDrag, enabled: boolean) {
   useEffect(() => {
     if (!enabled) return undefined;
     let swipe: {
@@ -36,7 +28,7 @@ export function useTouchSwipe(
       swipe = {
         x: event.clientX,
         y: event.clientY,
-        closing: openRef.current,
+        closing: drag.isOpen(),
         axis: null,
         progress: 0,
         speed: 0,

@@ -10,8 +10,8 @@ import { useDrawerDrag } from '@/hooks/use-drawer-drag';
 import { useTickSound } from '@/hooks/use-tick-sound';
 import { useTouchSwipe } from '@/hooks/use-touch-swipe';
 import { useTrackpadSwipe } from '@/hooks/use-trackpad-swipe';
+import { ARTICLE_TITLE_ID } from '@/lib/article';
 
-import { ARTICLE_TITLE_ID } from './Article';
 import { RememberArticleContext } from './RememberArticle';
 import { SectionScrubber } from './SectionScrubber';
 
@@ -84,9 +84,9 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
       else if (route.lastArticle) router.push(route.lastArticle, { scroll: false });
     },
   });
-  const swipe = { enabled: hydrated && (open || route.lastArticle !== null), open };
-  useTouchSwipe(drag, swipe);
-  useTrackpadSwipe(drag, swipe);
+  const canSwipe = hydrated && (open || route.lastArticle !== null);
+  useTouchSwipe(drag, canSwipe);
+  useTrackpadSwipe(drag, canSwipe);
 
   return (
     <RememberArticleContext value={setRemembered}>
