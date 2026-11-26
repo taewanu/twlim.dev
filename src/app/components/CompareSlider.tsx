@@ -117,6 +117,7 @@ export function CompareSlider({
           'relative cursor-ew-resize touch-pan-y overflow-hidden rounded-lg border border-underline select-none [-webkit-touch-callout:none]',
           size,
         )}
+        data-swipe-ignore
         onDragStart={(e) => e.preventDefault()}
         onPointerDown={onPointerDown}
         onPointerMove={onPointerMove}

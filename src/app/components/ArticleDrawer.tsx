@@ -4,7 +4,7 @@ import { Dialog } from '@base-ui/react/dialog';
 import { Toggle } from '@base-ui/react/toggle';
 import { Volume2, VolumeX, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
-import { type ReactNode, useRef, useState, useSyncExternalStore } from 'react';
+import { type ReactNode, useLayoutEffect, useRef, useState, useSyncExternalStore } from 'react';
 
 import { useDrawerDrag } from '@/hooks/use-drawer-drag';
 import { useTickSound } from '@/hooks/use-tick-sound';
@@ -65,6 +65,12 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
   const indexRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const fallbackRef = useRef<HTMLDivElement>(null);
+  const handoffScroll = useRef(0);
+  // Runs in the hydration commit, so a reader who scrolled the server-rendered panel keeps their place.
+  useLayoutEffect(() => {
+    handoffScroll.current = fallbackRef.current?.scrollTop ?? 0;
+  }, []);
   const sound = useTickSound();
 
   function goToIndex() {
@@ -96,7 +102,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
       <div
         ref={indexRef}
         data-open={open ? '' : undefined}
-        className="touch-pan-y touch-pinch-zoom transition-[translate,opacity] duration-(--duration-drawer) ease-drawer [--index-opacity:0.4] [--index-shift:calc(var(--spacing-peek)-(100vw+min(var(--container-xl),100vw))/2)] motion-reduce:transition-none data-open:translate-x-(--index-shift) data-open:opacity-(--index-opacity)"
+        className="touch-pan-y touch-pinch-zoom transition-[translate,opacity] duration-(--duration-drawer) ease-drawer [--index-shift:calc(var(--spacing-peek)-(100vw+min(var(--container-xl),100vw))/2)] motion-reduce:transition-none data-open:translate-x-(--index-shift) data-open:opacity-(--index-opacity)"
       >
         {children}
       </div>
@@ -104,7 +110,9 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
       {/* Base UI portals render only in the browser, so a direct visit gets the open panel as plain HTML first. */}
       {!hydrated && open && (
         <div className={PANEL}>
-          <div className={SCROLLER}>{content}</div>
+          <div ref={fallbackRef} className={SCROLLER}>
+            {content}
+          </div>
         </div>
       )}
 
@@ -125,7 +133,13 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
             >
               <div
                 key={`scroller:${route.lastArticle}`}
-                ref={scrollerRef}
+                ref={(scroller) => {
+                  scrollerRef.current = scroller;
+                  if (scroller && handoffScroll.current) {
+                    scroller.scrollTop = handoffScroll.current;
+                    handoffScroll.current = 0;
+                  }
+                }}
                 tabIndex={-1}
                 className={SCROLLER}
               >

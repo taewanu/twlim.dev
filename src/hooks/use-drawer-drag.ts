@@ -3,8 +3,12 @@ import { flushSync } from 'react-dom';
 
 import { prefersReducedMotion } from '@/lib/motion';
 
-// Matches --duration-drawer in globals.css.
-const DURATION_MS = 420;
+// globals.css owns the slide length, so clicks and released gestures take the same time.
+function drawerDuration() {
+  const value = getComputedStyle(document.documentElement).getPropertyValue('--duration-drawer');
+  // The production build minifies 420ms to .42s.
+  return value.trim().endsWith('ms') ? parseFloat(value) : parseFloat(value) * 1000;
+}
 
 type Options = {
   open: boolean;
@@ -18,7 +22,7 @@ export type DrawerDrag = ReturnType<typeof createDrawerDrag>;
 
 // The curve's starting slope is the finger's speed, so the panel carries on without a jump.
 function releaseTransition(remaining: number, speed: number) {
-  let ms = DURATION_MS;
+  let ms = drawerDuration();
   if ((speed * ms) / remaining > 3) ms = Math.max(160, (3 * remaining) / speed);
   ms = Math.round(ms);
   const y1 = Math.min(1, (0.3 * speed * ms) / remaining);
