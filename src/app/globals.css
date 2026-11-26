@@ -16,11 +16,9 @@
   --text-article--line-height: 1.7;
   --text-heading: 0.875rem;
   --text-heading--line-height: 1.4rem;
-  --text-tip-touch: 0.9375rem;
   --font-weight-reading: 460;
   --spacing-block: 1.1rem;
   --container-article: 560px;
-  --spacing-tick: 1.5px;
   --font-serif: var(--font-lora);
   --font-sans: var(--font-source-sans);
   --font-heading: var(--font-serif);
@@ -41,14 +39,6 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
-}
-
-/* Not inline, so the drawer's calc() expressions can read these at runtime. */
-@theme {
-  --container-drawer: 840px;
-  --spacing-peek: 176px;
-  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
-  --duration-drawer: 420ms;
 }
 
 body {

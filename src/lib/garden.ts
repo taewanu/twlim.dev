@@ -1,6 +1,7 @@
-import { readdirSync } from 'node:fs';
+import { readdirSync, readFileSync } from 'node:fs';
 import path from 'node:path';
 
+import GithubSlugger from 'github-slugger';
 import type { MDXContent, MDXModule } from 'mdx/types';
 import { z } from 'zod';
 
@@ -29,6 +30,19 @@ function slugOf(file: string) {
   return file.replace(/\.mdx?$/, '');
 }
 
+// Slugs every heading level, as rehype-slug does, so the ids stay in sync with the page.
+export function sectionsOf(source: string) {
+  const slugger = new GithubSlugger();
+  const withoutCode = source.replace(/^```[\s\S]*?^```/gm, '');
+  return [...withoutCode.matchAll(/^(#{1,6}) (.+)$/gm)]
+    .map(([, hashes, text]) => {
+      const label = text.replace(/`/g, '').trim();
+      return { level: hashes.length, id: slugger.slug(label), label };
+    })
+    .filter((heading) => heading.level === 2)
+    .map(({ id, label }) => ({ id, label }));
+}
+
 export function noteSlugs() {
   return noteFiles().map(slugOf);
 }
@@ -46,6 +60,7 @@ export async function loadNote(slug: string) {
     slug,
     Content: note.data.default,
     meta: note.data.frontmatter,
+    sections: sectionsOf(readFileSync(path.join(GARDEN_DIR, file), 'utf8')),
   };
 }
 
