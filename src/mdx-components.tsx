@@ -1,23 +1,15 @@
 import type { MDXComponents } from 'mdx/types';
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { Clip } from '@/app/components/Clip';
 import { CompareSlider } from '@/app/components/CompareSlider';
+import { TextLink } from '@/app/components/TextLink';
 
 const components: MDXComponents = {
   Clip,
   CompareSlider,
   Image,
-  a: ({ href = '', children }) => {
-    if (href.startsWith('/')) return <Link href={href}>{children}</Link>;
-    if (!href.startsWith('http')) return <a href={href}>{children}</a>;
-    return (
-      <a href={href} target="_blank" rel="noopener noreferrer">
-        {children}
-      </a>
-    );
-  },
+  a: ({ href = '', children }) => <TextLink href={href}>{children}</TextLink>,
   h2: ({ children, id }) => (
     <h2
       id={id}
