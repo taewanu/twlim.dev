@@ -155,8 +155,7 @@ export function SectionScrubber({
             ? 0
             : LIFT * Math.exp(-((tick.y - pointerY) ** 2) / (2 * LIFT_SIGMA ** 2));
         let color = tick.major ? 'bg-muted' : 'bg-underline';
-        if (tick.pos < scrollTop) color = 'bg-subtle';
-        if (isCurrent) color = 'bg-text';
+        if (isCurrent || tick.pos < scrollTop) color = 'bg-text';
         return (
           <span
             key={tick.key}
