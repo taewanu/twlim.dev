@@ -41,6 +41,14 @@
   --color-ring: var(--ring);
 }
 
+/* Not inline, so the drawer's calc() expressions can read these at runtime. */
+@theme {
+  --container-drawer: 840px;
+  --spacing-peek: 176px;
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  --duration-drawer: 420ms;
+}
+
 body {
   background-color: var(--color-bg);
   color: var(--color-text);
