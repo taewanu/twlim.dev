@@ -10,7 +10,7 @@ import { useDrawerDrag } from '@/hooks/use-drawer-drag';
 import { useTickSound } from '@/hooks/use-tick-sound';
 import { useTouchSwipe } from '@/hooks/use-touch-swipe';
 import { useTrackpadSwipe } from '@/hooks/use-trackpad-swipe';
-import { ARTICLE_TITLE_ID } from '@/lib/article';
+import { ARTICLE_TITLE_ID, isIndexPage } from '@/lib/article';
 
 import { RememberArticleContext } from './RememberArticle';
 import { SectionScrubber } from './SectionScrubber';
@@ -24,16 +24,16 @@ const CHROME_BUTTON =
 
 const noSubscription = () => () => {};
 
-// Back is safe only when the index is the entry behind; before a direct visit it would leave the site.
-function indexIsBehind() {
+// Back is safe only when that index page is the entry behind; before a direct visit it would leave the site.
+function isBehind(pathname: string) {
   if (typeof navigation === 'undefined' || !navigation.currentEntry) return false;
   const behind = navigation.entries()[navigation.currentEntry.index - 1];
-  return behind?.url ? new URL(behind.url).pathname === '/' : false;
+  return behind?.url ? new URL(behind.url).pathname === pathname : false;
 }
 
 /**
- * Opens an article as a centered panel over the index, which slides left until only its right
- * edge shows. The URL decides what is open; gestures and the close button navigate.
+ * Opens an article as a centered panel over the index page it was opened from, which slides left
+ * until only its right edge shows. The URL decides what is open; gestures and the close button navigate.
  */
 export function ArticleDrawer({ article, children }: { article: ReactNode; children: ReactNode }) {
   const pathname = usePathname();
@@ -43,35 +43,38 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     () => true,
     () => false,
   );
+  const onIndex = isIndexPage(pathname);
   const [route, setRoute] = useState({
     pathname,
-    lastArticle: pathname === '/' ? null : pathname,
+    index: onIndex ? pathname : '/',
+    lastArticle: onIndex ? null : pathname,
   });
   // Follows the URL, but flips ahead of a navigation so the slide starts without waiting for it.
-  const [open, setOpen] = useState(pathname !== '/');
+  const [open, setOpen] = useState(!onIndex);
   if (route.pathname !== pathname) {
     setRoute({
       pathname,
-      lastArticle: pathname === '/' ? route.lastArticle : pathname,
+      index: onIndex ? pathname : route.index,
+      lastArticle: onIndex ? route.lastArticle : pathname,
     });
-    setOpen(pathname !== '/');
+    setOpen(!onIndex);
   }
   const [remembered, setRemembered] = useState<ReactNode>(null);
-  const content = pathname === '/' ? remembered : article;
+  const content = onIndex ? remembered : article;
 
   const indexRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
   const sound = useTickSound();
 
-  function goHome() {
-    if (indexIsBehind()) router.back();
-    else router.push('/', { scroll: false });
+  function goToIndex() {
+    if (isBehind(route.index)) router.back();
+    else router.push(route.index, { scroll: false });
   }
 
   function close() {
     setOpen(false);
-    goHome();
+    goToIndex();
   }
 
   const drag = useDrawerDrag({
@@ -80,7 +83,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     indexRef,
     setOpen,
     onCommit: (closed) => {
-      if (closed) goHome();
+      if (closed) goToIndex();
       else if (route.lastArticle) router.push(route.lastArticle, { scroll: false });
     },
   });
