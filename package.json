@@ -9,6 +9,7 @@
     "lint": "vp lint",
     "format": "vp fmt",
     "check": "vp check",
+    "test": "vp test run",
     "prepare": "vp config --no-agent"
   },
   "dependencies": {
