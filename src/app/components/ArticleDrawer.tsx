@@ -5,6 +5,10 @@ import { X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { type ReactNode, useRef, useState, useSyncExternalStore } from 'react';
 
+import { useDrawerDrag } from '@/hooks/use-drawer-drag';
+import { useTouchSwipe } from '@/hooks/use-touch-swipe';
+import { useTrackpadSwipe } from '@/hooks/use-trackpad-swipe';
+
 import { ARTICLE_TITLE_ID } from './Article';
 import { RememberArticleContext } from './RememberArticle';
 
@@ -47,6 +51,8 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
   const [remembered, setRemembered] = useState<ReactNode>(null);
   const content = pathname === '/' ? remembered : article;
 
+  const indexRef = useRef<HTMLDivElement>(null);
+  const panelRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
 
   function goHome() {
@@ -59,9 +65,24 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     goHome();
   }
 
+  const drag = useDrawerDrag({
+    open,
+    panelRef,
+    indexRef,
+    setOpen,
+    onCommit: (closed) => {
+      if (closed) goHome();
+      else if (route.lastArticle) router.push(route.lastArticle, { scroll: false });
+    },
+  });
+  const swipe = { enabled: hydrated && (open || route.lastArticle !== null), open };
+  useTouchSwipe(drag, swipe);
+  useTrackpadSwipe(drag, swipe);
+
   return (
     <RememberArticleContext value={setRemembered}>
       <div
+        ref={indexRef}
         data-open={open ? '' : undefined}
         className="touch-pan-y touch-pinch-zoom transition-[translate,opacity] duration-(--duration-drawer) ease-drawer [--index-opacity:0.4] [--index-shift:calc(var(--spacing-peek)-(100vw+min(var(--container-xl),100vw))/2)] motion-reduce:transition-none data-open:translate-x-(--index-shift) data-open:opacity-(--index-opacity)"
       >
@@ -85,6 +106,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
           <Dialog.Portal>
             <Dialog.Backdrop className="fixed inset-0 cursor-w-resize" />
             <Dialog.Popup
+              ref={panelRef}
               initialFocus={scrollerRef}
               aria-labelledby={ARTICLE_TITLE_ID}
               className={`${PANEL} data-ending-style:translate-x-[100vw] data-starting-style:translate-x-[100vw]`}
