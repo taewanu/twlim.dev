@@ -1,16 +1,19 @@
 'use client';
 
 import { Dialog } from '@base-ui/react/dialog';
-import { X } from 'lucide-react';
+import { Toggle } from '@base-ui/react/toggle';
+import { Volume2, VolumeX, X } from 'lucide-react';
 import { usePathname, useRouter } from 'next/navigation';
 import { type ReactNode, useRef, useState, useSyncExternalStore } from 'react';
 
 import { useDrawerDrag } from '@/hooks/use-drawer-drag';
+import { useTickSound } from '@/hooks/use-tick-sound';
 import { useTouchSwipe } from '@/hooks/use-touch-swipe';
 import { useTrackpadSwipe } from '@/hooks/use-trackpad-swipe';
 
 import { ARTICLE_TITLE_ID } from './Article';
 import { RememberArticleContext } from './RememberArticle';
+import { SectionScrubber } from './SectionScrubber';
 
 const PANEL =
   'fixed inset-0 mx-auto w-drawer max-w-full bg-bg text-text outline-none transition-[translate] duration-(--duration-drawer) ease-drawer motion-reduce:transition-none';
@@ -54,6 +57,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
   const indexRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
   const scrollerRef = useRef<HTMLDivElement>(null);
+  const sound = useTickSound();
 
   function goHome() {
     if (route.previous === '/') router.back();
@@ -120,11 +124,25 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
                 {content}
               </div>
 
-              <div className="absolute top-4 right-4">
+              <div className="absolute top-4 right-4 flex gap-1">
+                <Toggle
+                  pressed={sound.enabled}
+                  onPressedChange={sound.setEnabled}
+                  aria-label="Scrubber sound"
+                  className={CHROME_BUTTON}
+                >
+                  {sound.enabled ? <Volume2 className="size-4" /> : <VolumeX className="size-4" />}
+                </Toggle>
                 <Dialog.Close aria-label="Close" className={CHROME_BUTTON}>
                   <X className="size-4" />
                 </Dialog.Close>
               </div>
+
+              <SectionScrubber
+                key={`scrubber:${route.lastArticle}`}
+                scrollerRef={scrollerRef}
+                onSnap={() => sound.play()}
+              />
             </Dialog.Popup>
           </Dialog.Portal>
         </Dialog.Root>
