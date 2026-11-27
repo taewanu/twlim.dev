@@ -15,7 +15,7 @@ import { useTrackpadSwipe } from '@/hooks/use-trackpad-swipe';
 import { ARTICLE_TITLE_ID, isIndexPage } from '@/lib/article';
 
 import { ArticleBody } from './ArticleBody';
-import { LastReadContext } from './LastReadDot';
+import { type LastRead, LastReadContext } from './LastReadDot';
 import { RememberArticleContext } from './RememberArticle';
 import { SectionScrubber } from './SectionScrubber';
 
@@ -27,6 +27,13 @@ const CHROME_BUTTON =
   'flex size-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-code-bg hover:text-text focus-visible:outline-1 focus-visible:outline-muted';
 
 // Back is safe only when that index page is the entry behind; before a direct visit it would leave the site.
+function rowIdentity(row: HTMLElement): LastRead {
+  return {
+    href: row.dataset.swipeArticle ?? '',
+    title: row.querySelector('a')?.textContent ?? null,
+  };
+}
+
 function isBehind(pathname: string) {
   if (typeof navigation === 'undefined' || !navigation.currentEntry) return false;
   const behind = navigation.entries()[navigation.currentEntry.index - 1];
@@ -58,6 +65,11 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     setOpen(!onIndex);
   }
   const [remembered, setRemembered] = useState<ReactNode>(null);
+  // Two rows can link to the same article, so the dot remembers which one the reader used.
+  const [usedRow, setUsedRow] = useState<LastRead | null>(null);
+  const lastHref = open ? null : route.lastArticle;
+  const lastTitle = usedRow && usedRow.href === lastHref ? usedRow.title : null;
+  const lastRead = lastHref ? { href: lastHref, title: lastTitle } : null;
   // A row swiped open before its article has loaded shows just its title until the page arrives.
   const [preview, setPreview] = useState<{ href: string; title: string } | null>(null);
   const remember = useCallback((node: ReactNode) => {
@@ -74,6 +86,14 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
   useLayoutEffect(() => {
     handoffScroll.current = fallbackRef.current?.scrollTop ?? 0;
   }, []);
+  // After a direct visit or a link inside an article, the dot falls back to the first row for it.
+  useLayoutEffect(() => {
+    if (!lastHref || lastTitle !== null) return;
+    const row = indexRef.current?.querySelector<HTMLElement>(
+      `[data-swipe-article="${CSS.escape(lastHref)}"]`,
+    );
+    if (row) setUsedRow(rowIdentity(row));
+  }, [lastHref, lastTitle]);
   const sound = useTickSound();
   useSwipeHint(indexRef, onIndex);
 
@@ -104,6 +124,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     onCommit: (closing, row) => {
       if (closing) return goToIndex();
       markSwipeLearned();
+      if (row) setUsedRow(rowIdentity(row));
       const href = targetOf(row);
       if (href) router.push(href, { scroll: false });
     },
@@ -115,10 +136,17 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     <RememberArticleContext value={remember}>
       <div
         ref={indexRef}
+        onClickCapture={(event) => {
+          const row =
+            event.target instanceof Element
+              ? event.target.closest<HTMLElement>('[data-swipe-article]')
+              : null;
+          if (row) setUsedRow(rowIdentity(row));
+        }}
         data-open={open ? '' : undefined}
         className="touch-pan-y touch-pinch-zoom transition-[translate,opacity] duration-(--duration-drawer) ease-drawer [--index-shift:calc(var(--spacing-peek)-(100vw+min(var(--container-xl),100vw))/2)] motion-reduce:transition-none data-open:translate-x-(--index-shift) data-open:opacity-(--index-opacity)"
       >
-        <LastReadContext value={open ? null : route.lastArticle}>{children}</LastReadContext>
+        <LastReadContext value={lastRead}>{children}</LastReadContext>
       </div>
 
       {/* The slot renders here before and after hydration, so Next never remounts the article. */}
