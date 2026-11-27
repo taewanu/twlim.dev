@@ -6,10 +6,7 @@ import { useHydrated } from '@/hooks/use-hydrated';
 
 export const RememberArticleContext = createContext<(article: ReactNode) => void>(() => {});
 
-/**
- * Hands the article to the drawer, which renders it in one place through every navigation so its
- * scroll and media survive. Before hydration it renders in place as the plain HTML panel.
- */
+/** Hands the article to the drawer to render, showing it in place only as the server-rendered panel. */
 export function RememberArticle({ children }: { children: ReactNode }) {
   const remember = use(RememberArticleContext);
   const hydrated = useHydrated();

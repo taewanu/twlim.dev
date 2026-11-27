@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 
+import { swipeRowAt } from '@/lib/swipe-row';
 import { stepTrackpad, type TrackpadGesture } from '@/lib/trackpad-gesture';
 
 import type { DrawerDrag } from './use-drawer-drag';
@@ -18,15 +19,15 @@ export function useTrackpadSwipe(drag: DrawerDrag, enabled: boolean) {
     function onWheel(event: WheelEvent) {
       if (event.target instanceof Element && event.target.closest('pre')) return;
       const commitAt = Math.min(innerWidth / 3, 200);
-      const starting = !gesture?.dragging;
+      // Until the panel moves, the row under the pointer is the one an opening swipe opens.
+      if (!gesture?.dragging) row = swipeRowAt(event.clientX, event.clientY);
       const [next, step] = stepTrackpad(gesture, event, { open: drag.isOpen(), commitAt });
+      // With nothing to open, the browser keeps the swipe for its own history navigation.
+      if (step.type !== 'pass' && !next.closing && !drag.canOpen(row)) {
+        gesture = null;
+        return;
+      }
       gesture = next;
-      // The row under the pointer when the panel first moves is the one an opening swipe opens.
-      if (starting && step.type === 'drag')
-        row =
-          !next.closing && event.target instanceof Element
-            ? event.target.closest<HTMLElement>('[data-swipe-article]')
-            : null;
 
       clearTimeout(idle);
       idle = setTimeout(() => {

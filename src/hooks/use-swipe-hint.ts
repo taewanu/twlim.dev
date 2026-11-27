@@ -4,7 +4,7 @@ import { prefersReducedMotion } from '@/lib/motion';
 
 const LEARNED_KEY = 'drawer-swipe-learned';
 const SHOWN_KEY = 'drawer-swipe-hint-shown';
-// Readers who never swipe, such as mouse users, stop seeing the hint after a few visits.
+// Readers who never swipe stop seeing the hint after this many visits.
 const MAX_SHOWINGS = 3;
 const DELAY_MS = 1200;
 const BOUNCES: Keyframe[] = [
@@ -21,7 +21,7 @@ export function markSwipeLearned() {
   try {
     localStorage.setItem(LEARNED_KEY, '1');
   } catch {
-    // Storage can be blocked; the hint then shows up to its limit again.
+    // Blocked storage only means the hint may show again.
   }
 }
 
@@ -42,17 +42,19 @@ export function useSwipeHint(indexRef: RefObject<HTMLElement | null>, onIndex: b
     const showings = readShowings();
     if (showings >= MAX_SHOWINGS) return undefined;
     const timer = setTimeout(() => {
-      const row = [...(indexRef.current?.querySelectorAll('[data-swipe-article]') ?? [])].find(
-        (candidate) => {
-          const box = candidate.getBoundingClientRect();
-          return box.top >= 0 && box.bottom <= innerHeight;
-        },
-      );
+      const index = indexRef.current;
+      // A bounce during a drag or under the open panel would fight the swipe or go unseen.
+      if (!index || index.hasAttribute('data-open') || index.hasAttribute('data-swipe-arming'))
+        return;
+      const row = [...index.querySelectorAll('[data-swipe-article]')].find((candidate) => {
+        const box = candidate.getBoundingClientRect();
+        return box.top >= 0 && box.bottom <= innerHeight;
+      });
       if (!row) return;
       try {
         localStorage.setItem(SHOWN_KEY, String(showings + 1));
       } catch {
-        // Without storage the count can't advance; the learned check still applies.
+        // Blocked storage only means the count doesn't advance.
       }
       row.animate(BOUNCES, { duration: 1100 });
     }, DELAY_MS);

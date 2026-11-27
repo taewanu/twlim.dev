@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 
+import { swipeRowAt } from '@/lib/swipe-row';
+
 import type { DrawerDrag } from './use-drawer-drag';
 
 const AXIS_LOCK = 10;
@@ -8,7 +10,7 @@ const COMMIT_PROGRESS = 1 / 3;
 // The browser's own back gesture starts at the left edge.
 const BACK_GESTURE_EDGE = 24;
 
-/** Drags the article right to close it, or an index row left to open its article (empty space reopens the last one). */
+/** Drags the article right to close it, or an index row left to open its article. */
 export function useTouchSwipe(drag: DrawerDrag, enabled: boolean) {
   useEffect(() => {
     if (!enabled) return undefined;
@@ -27,14 +29,13 @@ export function useTouchSwipe(drag: DrawerDrag, enabled: boolean) {
       if (event.target instanceof Element && event.target.closest('[data-swipe-ignore], pre'))
         return;
       const closing = drag.isOpen();
+      const row = closing ? null : swipeRowAt(event.clientX, event.clientY);
+      if (!closing && !drag.canOpen(row)) return;
       swipe = {
         x: event.clientX,
         y: event.clientY,
         closing,
-        row:
-          !closing && event.target instanceof Element
-            ? event.target.closest<HTMLElement>('[data-swipe-article]')
-            : null,
+        row,
         axis: null,
         progress: 0,
         speed: 0,

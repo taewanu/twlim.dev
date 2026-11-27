@@ -82,6 +82,9 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     else router.push(route.index, { scroll: false });
   }
 
+  // A swipe opens the row it starts on; on empty space it reopens the last article.
+  const targetOf = (row: HTMLElement | null) => row?.dataset.swipeArticle ?? route.lastArticle;
+
   function close() {
     setOpen(false);
     goToIndex();
@@ -92,17 +95,16 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     panelRef,
     indexRef,
     setOpen,
+    canOpen: (row) => targetOf(row) !== null,
     onOpenStart: (row) => {
-      const href = row?.dataset.swipeArticle ?? route.lastArticle;
-      if (!href) return false;
+      const href = targetOf(row);
       const title = row?.querySelector('a')?.textContent ?? '';
-      setPreview(href === route.lastArticle ? null : { href, title });
-      return true;
+      setPreview(href && href !== route.lastArticle ? { href, title } : null);
     },
-    onCommit: (closed, row) => {
-      if (closed) return goToIndex();
+    onCommit: (closing, row) => {
+      if (closing) return goToIndex();
       markSwipeLearned();
-      const href = row?.dataset.swipeArticle ?? route.lastArticle;
+      const href = targetOf(row);
       if (href) router.push(href, { scroll: false });
     },
   });
@@ -119,8 +121,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
         <LastReadContext value={open ? null : route.lastArticle}>{children}</LastReadContext>
       </div>
 
-      {/* Base UI portals render only in the browser, so a direct visit gets the open panel as plain HTML first.
-          The slot always renders here, so Next never remounts it; after hydration it only reports to the dialog. */}
+      {/* The slot renders here before and after hydration, so Next never remounts the article. */}
       <div className={!hydrated && open ? PANEL : 'hidden'}>
         <div ref={fallbackRef} className={SCROLLER}>
           {article}
@@ -135,7 +136,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
           }}
         >
           <Dialog.Portal keepMounted>
-            <Dialog.Backdrop className="fixed inset-0 cursor-w-resize" />
+            <Dialog.Backdrop className="fixed inset-0 cursor-w-resize touch-pan-y touch-pinch-zoom" />
             <Dialog.Popup
               ref={panelRef}
               initialFocus={scrollerRef}
