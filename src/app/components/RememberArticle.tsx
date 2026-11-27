@@ -1,15 +1,19 @@
 'use client';
 
+import { usePathname } from 'next/navigation';
 import { createContext, type ReactNode, use, useLayoutEffect } from 'react';
 
-export const RememberArticleContext = createContext<(article: ReactNode) => void>(() => {});
+import { useHydrated } from '@/hooks/use-hydrated';
 
-/**
- * Hands the rendered article to the drawer, which keeps showing this copy on an index page (where
- * the @article slot is empty) while the panel slides out or is swiped back.
- */
+export const RememberArticleContext = createContext<(href: string, article: ReactNode) => void>(
+  () => {},
+);
+
+/** Hands the article to the drawer to render, showing it in place only as the server-rendered panel. */
 export function RememberArticle({ children }: { children: ReactNode }) {
   const remember = use(RememberArticleContext);
-  useLayoutEffect(() => remember(children), [remember, children]);
-  return children;
+  const pathname = usePathname();
+  const hydrated = useHydrated();
+  useLayoutEffect(() => remember(pathname, children), [remember, pathname, children]);
+  return hydrated ? null : children;
 }

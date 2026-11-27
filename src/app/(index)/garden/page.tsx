@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 
+import { IndexItem } from '@/app/components/IndexItem';
 import { loadPlantedNotes } from '@/lib/garden';
 
 export const metadata: Metadata = {
@@ -29,10 +30,12 @@ export async function Garden() {
             {notes
               .filter((note) => note.meta.topics.includes(topic))
               .map(({ slug, meta }) => (
-                <li key={slug}>
-                  <Link href={`/garden/${slug}`}>{meta.title}</Link>
-                  <span className="text-muted capitalize"> · {meta.stage}</span>
-                </li>
+                <IndexItem
+                  key={slug}
+                  href={`/garden/${slug}`}
+                  title={meta.title}
+                  summary={<span className="capitalize">{meta.stage}</span>}
+                />
               ))}
           </ul>
         </section>

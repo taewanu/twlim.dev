@@ -7,3 +7,8 @@ const INDEX_PAGES = new Set(['/', '/garden']);
 export function isIndexPage(pathname: string) {
   return INDEX_PAGES.has(pathname);
 }
+
+/** Whether a link on an index page opens in the drawer rather than leaving the index. */
+export function opensInDrawer(href: string) {
+  return href.startsWith('/') && !isIndexPage(href);
+}

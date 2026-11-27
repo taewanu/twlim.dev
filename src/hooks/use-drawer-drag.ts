@@ -15,8 +15,17 @@ type Options = {
   panelRef: RefObject<HTMLElement | null>;
   indexRef: RefObject<HTMLElement | null>;
   setOpen: (open: boolean) => void;
-  onCommit: (closed: boolean) => void;
+  /** Whether a swipe starting on `row`, or on empty space when it is null, has an article to open. */
+  canOpen: (row: HTMLElement | null) => boolean;
+  onOpenStart: (row: HTMLElement | null) => void;
+  onCommit: (closing: boolean, row: HTMLElement | null) => void;
+  /** An opening drag let go short of opening; the panel slides back out over `ms`. */
+  onSpringBack: (ms: number) => void;
 };
+
+// How far a swiped row leans out ahead of the index; it eases into this, so it never races the panel.
+const ROW_LEAN = 56;
+const FADE_MS = 150;
 
 export type DrawerDrag = ReturnType<typeof createDrawerDrag>;
 
@@ -32,8 +41,16 @@ function releaseTransition(remaining: number, speed: number) {
 
 function createDrawerDrag(initial: Options) {
   let current = initial;
-  let drag: { closing: boolean; travel: number; speed: number; time: number } | null = null;
+  let drag: {
+    closing: boolean;
+    row: HTMLElement | null;
+    travel: number;
+    speed: number;
+    time: number;
+  } | null = null;
   let settle: ReturnType<typeof setTimeout> | undefined;
+  let releasedRow: HTMLElement | null = null;
+  let faded: HTMLElement[] = [];
 
   const layers = () => {
     const { panelRef, indexRef } = current;
@@ -50,37 +67,89 @@ function createDrawerDrag(initial: Options) {
     }
   }
 
+  // IndexItem styles these attributes: the swiped row lights up while the other rows step back.
+  // Fades every sibling along the row's path up to the index, since fading an ancestor would fade the row too.
+  function surroundings(row: HTMLElement) {
+    const found: HTMLElement[] = [];
+    for (let node: HTMLElement | null = row; node?.parentElement; node = node.parentElement) {
+      if (node === current.indexRef.current) break;
+      for (const sibling of node.parentElement.children)
+        if (sibling !== node && sibling instanceof HTMLElement) found.push(sibling);
+    }
+    return found;
+  }
+
+  function arm(row: HTMLElement) {
+    current.indexRef.current?.setAttribute('data-swipe-arming', '');
+    row.setAttribute('data-swipe-armed', '');
+    row.style.transition = 'none';
+    faded = surroundings(row);
+    for (const el of faded) {
+      el.style.transition = `opacity ${FADE_MS}ms ease-out`;
+      el.style.opacity = 'var(--index-opacity)';
+    }
+  }
+
+  function disarm(row: HTMLElement, ms: number) {
+    current.indexRef.current?.removeAttribute('data-swipe-arming');
+    row.removeAttribute('data-swipe-armed');
+    row.style.transition = `translate ${ms}ms var(--ease-drawer)`;
+    row.style.translate = '';
+    releasedRow = row;
+    for (const el of faded) el.style.opacity = '';
+  }
+
+  function clearReleaseTransitions() {
+    if (releasedRow) releasedRow.style.transition = '';
+    for (const el of faded) el.style.transition = '';
+    releasedRow = null;
+    faded = [];
+  }
+
   return {
     /** The open state from the latest render, for gesture handlers that outlive it. */
     isOpen: () => current.open,
+
+    /** Whether an opening swipe on `row`, or on empty space, has an article to open. */
+    canOpen: (row: HTMLElement | null) => current.canOpen(row),
 
     /** Keeps the latest state and callbacks without restarting a gesture in progress. */
     update(next: Options) {
       current = next;
     },
 
-    /** Moves the panel `travel` px toward the drawer's other state; the first call starts the drag. */
-    move(travel: number, time: number) {
+    /** Moves the panel `travel` px toward the drawer's other state, opening `row`'s article; the first call starts the drag. */
+    move(travel: number, time: number, row: HTMLElement | null = null) {
       if (!drag) {
-        const { open, setOpen } = current;
-        // Opening has to mount the panel before it can follow the finger.
-        if (!open) flushSync(() => setOpen(true));
+        const { open, setOpen, canOpen, onOpenStart } = current;
+        if (!open) {
+          if (!canOpen(row)) return { progress: 0, speed: 0 };
+          // Opening has to mount the panel, showing what it opens, before it can follow the finger.
+          flushSync(() => {
+            onOpenStart(row);
+            setOpen(true);
+          });
+        }
         clearTimeout(settle);
+        clearReleaseTransitions();
         for (const el of layers()) el.style.transition = 'none';
-        drag = { closing: open, travel: 0, speed: 0, time: time - 16 };
+        drag = { closing: open, row: open ? null : row, travel: 0, speed: 0, time: time - 16 };
+        if (drag.row) arm(drag.row);
       }
       drag.speed = (travel - drag.travel) / Math.max(1, time - drag.time);
       drag.travel = travel;
       drag.time = time;
       const progress = Math.min(1, travel / innerWidth);
       paint(drag.closing ? 1 - progress : progress);
+      if (drag.row)
+        drag.row.style.translate = `${-ROW_LEAN * (1 - Math.exp(-travel / ROW_LEAN))}px`;
       return { progress, speed: drag.speed };
     },
 
     /** Lets go: `commit` finishes the swipe, otherwise the panel springs back. */
     end(commit: boolean) {
       if (!drag) return;
-      const { closing, travel, speed } = drag;
+      const { closing, row, travel, speed } = drag;
       drag = null;
       const progress = Math.min(1, travel / innerWidth);
       const remaining = Math.max(1, (commit ? 1 - progress : progress) * innerWidth);
@@ -93,10 +162,13 @@ function createDrawerDrag(initial: Options) {
         el.style.translate = '';
         el.style.opacity = '';
       }
+      if (row) disarm(row, release.ms);
       settle = setTimeout(() => {
         for (const el of layers()) el.style.transition = '';
+        clearReleaseTransitions();
       }, release.ms + 50);
-      if (commit) onCommit(closing);
+      if (commit) onCommit(closing, row);
+      else if (!closing) current.onSpringBack(release.ms);
     },
   };
 }
