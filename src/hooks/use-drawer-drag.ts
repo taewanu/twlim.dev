@@ -23,6 +23,7 @@ type Options = {
 
 // How far a swiped row leans out ahead of the index; it eases into this, so it never races the panel.
 const ROW_LEAN = 56;
+const FADE_MS = 150;
 
 export type DrawerDrag = ReturnType<typeof createDrawerDrag>;
 
@@ -47,6 +48,7 @@ function createDrawerDrag(initial: Options) {
   } | null = null;
   let settle: ReturnType<typeof setTimeout> | undefined;
   let releasedRow: HTMLElement | null = null;
+  let faded: HTMLElement[] = [];
 
   const layers = () => {
     const { panelRef, indexRef } = current;
@@ -64,10 +66,26 @@ function createDrawerDrag(initial: Options) {
   }
 
   // IndexItem styles these attributes: the swiped row lights up while the other rows step back.
+  // Fades every sibling along the row's path up to the index, since fading an ancestor would fade the row too.
+  function surroundings(row: HTMLElement) {
+    const found: HTMLElement[] = [];
+    for (let node: HTMLElement | null = row; node?.parentElement; node = node.parentElement) {
+      if (node === current.indexRef.current) break;
+      for (const sibling of node.parentElement.children)
+        if (sibling !== node && sibling instanceof HTMLElement) found.push(sibling);
+    }
+    return found;
+  }
+
   function arm(row: HTMLElement) {
     current.indexRef.current?.setAttribute('data-swipe-arming', '');
     row.setAttribute('data-swipe-armed', '');
     row.style.transition = 'none';
+    faded = surroundings(row);
+    for (const el of faded) {
+      el.style.transition = `opacity ${FADE_MS}ms ease-out`;
+      el.style.opacity = 'var(--index-opacity)';
+    }
   }
 
   function disarm(row: HTMLElement, ms: number) {
@@ -76,6 +94,14 @@ function createDrawerDrag(initial: Options) {
     row.style.transition = `translate ${ms}ms var(--ease-drawer)`;
     row.style.translate = '';
     releasedRow = row;
+    for (const el of faded) el.style.opacity = '';
+  }
+
+  function clearReleaseTransitions() {
+    if (releasedRow) releasedRow.style.transition = '';
+    for (const el of faded) el.style.transition = '';
+    releasedRow = null;
+    faded = [];
   }
 
   return {
@@ -103,7 +129,7 @@ function createDrawerDrag(initial: Options) {
           });
         }
         clearTimeout(settle);
-        if (releasedRow) releasedRow.style.transition = '';
+        clearReleaseTransitions();
         for (const el of layers()) el.style.transition = 'none';
         drag = { closing: open, row: open ? null : row, travel: 0, speed: 0, time: time - 16 };
         if (drag.row) arm(drag.row);
@@ -137,8 +163,7 @@ function createDrawerDrag(initial: Options) {
       if (row) disarm(row, release.ms);
       settle = setTimeout(() => {
         for (const el of layers()) el.style.transition = '';
-        if (releasedRow) releasedRow.style.transition = '';
-        releasedRow = null;
+        clearReleaseTransitions();
       }, release.ms + 50);
       if (commit) onCommit(closing, row);
     },

@@ -27,12 +27,7 @@ export function IndexItem({
   return (
     <li
       data-swipe-article={swipeable ? href : undefined}
-      className={cn(
-        // While another row is swiped open, this one steps back; the drawer sets these attributes.
-        'relative transition-opacity duration-150 in-data-swipe-arming:not-data-swipe-armed:opacity-35',
-        aside && 'flex justify-between gap-6',
-        className,
-      )}
+      className={cn('relative', aside && 'flex justify-between gap-6', className)}
     >
       <span>
         {swipeable && <LastReadDot href={href} title={title} />}
