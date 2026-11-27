@@ -26,7 +26,8 @@ const SCROLLER =
 const CHROME_BUTTON =
   'flex size-8 items-center justify-center rounded-md text-muted transition-colors hover:bg-code-bg hover:text-text focus-visible:outline-1 focus-visible:outline-muted';
 
-// Back is safe only when that index page is the entry behind; before a direct visit it would leave the site.
+type Article = { href: string; node: ReactNode };
+
 function rowIdentity(row: HTMLElement): LastRead {
   return {
     href: row.dataset.swipeArticle ?? '',
@@ -34,6 +35,7 @@ function rowIdentity(row: HTMLElement): LastRead {
   };
 }
 
+// Back is safe only when that index page is the entry behind; before a direct visit it would leave the site.
 function isBehind(pathname: string) {
   if (typeof navigation === 'undefined' || !navigation.currentEntry) return false;
   const behind = navigation.entries()[navigation.currentEntry.index - 1];
@@ -64,17 +66,23 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     });
     setOpen(!onIndex);
   }
-  const [remembered, setRemembered] = useState<ReactNode>(null);
+  // The article the panel holds, plus the one an opening swipe is loading under the finger.
+  const [committed, setCommitted] = useState<Article | null>(null);
+  const [incoming, setIncoming] = useState<Article | null>(null);
+  const loading = useRef<string | null>(null);
+  const dropIncoming = useRef<ReturnType<typeof setTimeout>>(undefined);
+  const shown = incoming ?? committed;
   // Two rows can link to the same article, so the dot remembers which one the reader used.
   const [usedRow, setUsedRow] = useState<LastRead | null>(null);
   const lastHref = open ? null : route.lastArticle;
   const lastTitle = usedRow && usedRow.href === lastHref ? usedRow.title : null;
   const lastRead = lastHref ? { href: lastHref, title: lastTitle } : null;
-  // A row swiped open before its article has loaded shows just its title until the page arrives.
+  // Until a swiped article's page arrives, the panel shows its title.
   const [preview, setPreview] = useState<{ href: string; title: string } | null>(null);
-  const remember = useCallback((node: ReactNode) => {
-    setRemembered(node);
-    setPreview(null);
+  const waiting = preview && preview.href !== shown?.href ? preview : null;
+  const remember = useCallback((href: string, node: ReactNode) => {
+    if (href === loading.current) setIncoming({ href, node });
+    else setCommitted({ href, node });
   }, []);
 
   const indexRef = useRef<HTMLDivElement>(null);
@@ -117,16 +125,39 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
     setOpen,
     canOpen: (row) => targetOf(row) !== null,
     onOpenStart: (row) => {
+      clearTimeout(dropIncoming.current);
+      setIncoming(null);
       const href = targetOf(row);
-      const title = row?.querySelector('a')?.textContent ?? '';
-      setPreview(href && href !== route.lastArticle ? { href, title } : null);
+      if (!href || href === committed?.href) return setPreview(null);
+      // Opening the URL as the drag starts lets the page render under the finger.
+      loading.current = href;
+      setPreview({ href, title: row?.querySelector('a')?.textContent ?? '' });
+      router.push(href, { scroll: false });
     },
     onCommit: (closing, row) => {
       if (closing) return goToIndex();
       markSwipeLearned();
       if (row) setUsedRow(rowIdentity(row));
       const href = targetOf(row);
-      if (href) router.push(href, { scroll: false });
+      if (href === loading.current) {
+        loading.current = null;
+        if (incoming) setCommitted(incoming);
+        setIncoming(null);
+      } else if (href) router.push(href, { scroll: false });
+    },
+    onSpringBack: (ms) => {
+      const href = loading.current;
+      if (!href) return;
+      loading.current = null;
+      // The dot and an empty-space swipe still point at the article that was already open.
+      setRoute((current) => ({ ...current, lastArticle: committed?.href ?? null }));
+      if (pathname === href) router.back();
+      else router.replace(route.index, { scroll: false });
+      // The page stays in the panel until it has slid out of sight.
+      dropIncoming.current = setTimeout(() => {
+        setIncoming(null);
+        setPreview(null);
+      }, ms);
     },
   });
   useTouchSwipe(drag, hydrated);
@@ -171,25 +202,36 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
               aria-labelledby={ARTICLE_TITLE_ID}
               className={`${PANEL} data-ending-style:translate-x-[100vw] data-starting-style:translate-x-[100vw]`}
             >
-              <div
-                key={`scroller:${route.lastArticle}`}
-                ref={(scroller) => {
-                  scrollerRef.current = scroller;
-                  if (scroller && handoffScroll.current) {
-                    scroller.scrollTop = handoffScroll.current;
-                    handoffScroll.current = 0;
-                  }
-                }}
-                tabIndex={-1}
-                className={SCROLLER}
-              >
-                {remembered}
-              </div>
+              {/* Incoming comes first, so its title wins the shared id; the committed one stays mounted, hidden. */}
+              {[incoming, committed].map(
+                (entry) =>
+                  entry &&
+                  !(entry === committed && incoming?.href === committed.href) && (
+                    <div
+                      key={`scroller:${entry.href}`}
+                      hidden={entry !== shown}
+                      ref={
+                        entry === shown
+                          ? (scroller) => {
+                              scrollerRef.current = scroller;
+                              if (scroller && handoffScroll.current) {
+                                scroller.scrollTop = handoffScroll.current;
+                                handoffScroll.current = 0;
+                              }
+                            }
+                          : undefined
+                      }
+                      tabIndex={-1}
+                      className={SCROLLER}
+                    >
+                      {entry.node}
+                    </div>
+                  ),
+              )}
 
-              {/* Covers the last article instead of replacing it, so a swipe that springs back keeps it mounted. */}
-              {preview && (
+              {waiting && (
                 <div className="absolute inset-0 overflow-hidden bg-bg">
-                  <ArticleBody title={preview.title} titleId={null} />
+                  <ArticleBody title={waiting.title} titleId={null} />
                 </div>
               )}
 
@@ -207,9 +249,9 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
                 </Dialog.Close>
               </div>
 
-              {!preview && (
+              {shown && !waiting && (
                 <SectionScrubber
-                  key={`scrubber:${route.lastArticle}`}
+                  key={`scrubber:${shown.href}`}
                   scrollerRef={scrollerRef}
                   onSnap={() => sound.play()}
                 />

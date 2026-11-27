@@ -19,6 +19,8 @@ type Options = {
   canOpen: (row: HTMLElement | null) => boolean;
   onOpenStart: (row: HTMLElement | null) => void;
   onCommit: (closing: boolean, row: HTMLElement | null) => void;
+  /** An opening drag let go short of opening; the panel slides back out over `ms`. */
+  onSpringBack: (ms: number) => void;
 };
 
 // How far a swiped row leans out ahead of the index; it eases into this, so it never races the panel.
@@ -166,6 +168,7 @@ function createDrawerDrag(initial: Options) {
         clearReleaseTransitions();
       }, release.ms + 50);
       if (commit) onCommit(closing, row);
+      else if (!closing) current.onSpringBack(release.ms);
     },
   };
 }
