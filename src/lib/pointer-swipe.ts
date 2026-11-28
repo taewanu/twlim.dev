@@ -66,7 +66,7 @@ export function listenForPointerSwipes(drag: DrawerDrag, signal: AbortSignal) {
       return;
     }
     if (step.type === 'wait') return;
-    if (step.first && !press.touch) holdSelection();
+    if (step.first && !press.touch) markSwiping();
     press.last = drag.move(step.travel, event.timeStamp, press.row);
     if (step.type === 'commit') drag.end(true);
   }
@@ -77,7 +77,7 @@ export function listenForPointerSwipes(drag: DrawerDrag, signal: AbortSignal) {
       if (!press.gesture.committed) drag.end(released && commits(press.last));
       swallowNextClick();
     }
-    releaseSelection();
+    unmarkSwiping();
     press = null;
   }
 
@@ -87,16 +87,17 @@ export function listenForPointerSwipes(drag: DrawerDrag, signal: AbortSignal) {
   addEventListener('pointercancel', (event) => finish(event, false), { signal });
   // Dragging a row's link would start the browser's link drag and cancel the swipe.
   addEventListener('dragstart', (event) => press && event.preventDefault(), { signal });
-  signal.addEventListener('abort', releaseSelection);
+  signal.addEventListener('abort', unmarkSwiping);
 }
 
-function holdSelection() {
+/** Shows the grabbing cursor and holds off text selection while a mouse swipe moves the panel. */
+function markSwiping() {
   getSelection()?.removeAllRanges();
-  document.documentElement.style.userSelect = 'none';
+  document.documentElement.dataset.swiping = '';
 }
 
-function releaseSelection() {
-  document.documentElement.style.removeProperty('user-select');
+function unmarkSwiping() {
+  delete document.documentElement.dataset.swiping;
 }
 
 function swallowClick(event: MouseEvent) {

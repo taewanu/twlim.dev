@@ -195,7 +195,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
           }}
         >
           <Dialog.Portal keepMounted>
-            <Dialog.Backdrop className="fixed inset-0 cursor-w-resize touch-pan-y touch-pinch-zoom" />
+            <Dialog.Backdrop className="fixed inset-0 cursor-pointer touch-pan-y touch-pinch-zoom" />
             <Dialog.Popup
               ref={panelRef}
               initialFocus={scrollerRef}

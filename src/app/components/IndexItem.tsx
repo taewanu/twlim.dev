@@ -31,7 +31,12 @@ export function IndexItem({
     >
       <span>
         {swipeable && <LastReadDot href={href} title={title} />}
-        <TextLink href={href} {...linkProps}>
+        {/* The link stretches over the whole row, so a click or a drag anywhere on it acts on the link. */}
+        <TextLink
+          href={href}
+          {...linkProps}
+          className={cn('after:absolute after:inset-0', linkProps?.className)}
+        >
           {title}
         </TextLink>
         <span className="text-muted"> · {summary}</span>
