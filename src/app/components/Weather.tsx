@@ -2,13 +2,12 @@
 
 import { Sun, CloudSun, Cloud, CloudFog, CloudRain, CloudSnow, CloudLightning } from 'lucide-react';
 import useSWR from 'swr';
+import { z } from 'zod';
 
 const WEATHER_URL =
   'https://api.open-meteo.com/v1/forecast?latitude=49.2827&longitude=-123.1207&current=weather_code';
 
-type WeatherResponse = {
-  current: { weather_code: number };
-};
+const WeatherResponse = z.object({ current: z.object({ weather_code: z.number() }) });
 
 const iconProps = {
   size: 14,
@@ -38,9 +37,14 @@ function categorize(code: number): keyof typeof ICONS {
 }
 
 export function Weather() {
-  const { data } = useSWR<WeatherResponse>(
+  const { data } = useSWR(
     WEATHER_URL,
-    (url: string) => fetch(url).then((r) => r.json()),
+    async (url: string) => {
+      const response = await fetch(url);
+      // An overloaded API answers with an error body, which has no weather in it.
+      if (!response.ok) throw new Error(`Weather API answered ${response.status}`);
+      return WeatherResponse.parse(await response.json());
+    },
     {
       onError: (err) => console.error('Weather fetch failed:', err),
     },
