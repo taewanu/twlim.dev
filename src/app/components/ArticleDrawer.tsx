@@ -8,9 +8,9 @@ import { type ReactNode, useCallback, useLayoutEffect, useRef, useState } from '
 
 import { useDrawerDrag } from '@/hooks/use-drawer-drag';
 import { useHydrated } from '@/hooks/use-hydrated';
+import { usePointerSwipe } from '@/hooks/use-pointer-swipe';
 import { markSwipeLearned, useSwipeHint } from '@/hooks/use-swipe-hint';
 import { useTickSound } from '@/hooks/use-tick-sound';
-import { useTouchSwipe } from '@/hooks/use-touch-swipe';
 import { useTrackpadSwipe } from '@/hooks/use-trackpad-swipe';
 import { ARTICLE_TITLE_ID, isIndexPage } from '@/lib/article';
 
@@ -160,7 +160,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
       }, ms);
     },
   });
-  useTouchSwipe(drag, hydrated);
+  usePointerSwipe(drag, hydrated);
   useTrackpadSwipe(drag, hydrated);
 
   return (
@@ -195,7 +195,7 @@ export function ArticleDrawer({ article, children }: { article: ReactNode; child
           }}
         >
           <Dialog.Portal keepMounted>
-            <Dialog.Backdrop className="fixed inset-0 cursor-w-resize touch-pan-y touch-pinch-zoom" />
+            <Dialog.Backdrop className="fixed inset-0 cursor-pointer touch-pan-y touch-pinch-zoom" />
             <Dialog.Popup
               ref={panelRef}
               initialFocus={scrollerRef}

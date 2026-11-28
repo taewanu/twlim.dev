@@ -82,6 +82,12 @@ a:hover,
   text-decoration-color: var(--color-text);
 }
 
+[data-swiping],
+[data-swiping] * {
+  cursor: grabbing;
+  user-select: none;
+}
+
 code {
   font-family: ui-monospace, Menlo, monospace;
   font-size: 0.875em;
