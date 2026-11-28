@@ -1,5 +1,6 @@
 import type { DrawerDrag } from '@/hooks/use-drawer-drag';
 
+import { autoCommitDistance } from './pointer-gesture';
 import { swipeRowAt } from './swipe-row';
 import { stepTrackpad, type TrackpadGesture } from './trackpad-gesture';
 
@@ -14,7 +15,7 @@ export function listenForTrackpadSwipes(drag: DrawerDrag, signal: AbortSignal) {
 
   function onWheel(event: WheelEvent) {
     if (event.target instanceof Element && event.target.closest('pre')) return;
-    const commitAt = Math.min(innerWidth / 3, 200);
+    const commitAt = autoCommitDistance(innerWidth);
     // Until the panel moves, the row under the pointer is the one an opening swipe opens.
     if (!gesture?.dragging) row = swipeRowAt(event.clientX, event.clientY);
     const [next, step] = stepTrackpad(gesture, event, { open: drag.isOpen(), commitAt });

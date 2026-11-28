@@ -1,6 +1,7 @@
 const AXIS_LOCK = 10;
 const FLICK_SPEED = 0.4;
 const COMMIT_PROGRESS = 1 / 3;
+const AUTO_COMMIT_MAX = 200;
 // The browser's own back gesture starts at the left edge.
 const BACK_GESTURE_EDGE = 24;
 
@@ -43,17 +44,28 @@ export type PointerGesture = {
   axis: 'x' | 'y' | null;
   /** Whether the panel has started to follow the pointer. */
   moving: boolean;
+  /** After a commit the rest of the press does nothing. */
+  committed: boolean;
 };
 
 export type PointerStep =
   | { type: 'wait' }
   | { type: 'abandon' }
-  | { type: 'drag'; travel: number; first: boolean };
+  | { type: 'drag'; travel: number; first: boolean }
+  | { type: 'commit'; travel: number; first: boolean };
 
+/** How far a mouse or trackpad swipe travels before it finishes by itself, so a wide screen needs no longer drag than a narrow one. */
+export function autoCommitDistance(viewportWidth: number) {
+  return Math.min(viewportWidth / 3, AUTO_COMMIT_MAX);
+}
+
+/** Reads one move; `commitAt` is Infinity for touch, whose finger carries the panel until release. */
 export function stepPointer(
   gesture: PointerGesture,
   { x, y }: { x: number; y: number },
+  { commitAt }: { commitAt: number },
 ): [PointerGesture, PointerStep] {
+  if (gesture.committed) return [gesture, { type: 'wait' }];
   const dx = x - gesture.x;
   const dy = y - gesture.y;
   let { axis } = gesture;
@@ -66,9 +78,15 @@ export function stepPointer(
   const travel = Math.max(0, gesture.closing ? dx : -dx);
   // A pull the other way, such as selecting a title rightward, never moves the panel.
   if (!gesture.moving && travel === 0) return [{ ...gesture, axis }, { type: 'wait' }];
+  const first = !gesture.moving;
+  if (travel >= commitAt)
+    return [
+      { ...gesture, axis, moving: true, committed: true },
+      { type: 'commit', travel, first },
+    ];
   return [
     { ...gesture, axis, moving: true },
-    { type: 'drag', travel, first: !gesture.moving },
+    { type: 'drag', travel, first },
   ];
 }
 

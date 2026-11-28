@@ -1,6 +1,12 @@
 import type { DrawerDrag } from '@/hooks/use-drawer-drag';
 
-import { commits, startPointer, stepPointer, type PointerGesture } from './pointer-gesture';
+import {
+  autoCommitDistance,
+  commits,
+  startPointer,
+  stepPointer,
+  type PointerGesture,
+} from './pointer-gesture';
 import { swipeRowAt } from './swipe-row';
 
 /** Lets touch and mouse drags drive the drawer until the signal aborts. */
@@ -40,6 +46,7 @@ export function listenForPointerSwipes(drag: DrawerDrag, signal: AbortSignal) {
         closing: start === 'close',
         axis: null,
         moving: false,
+        committed: false,
       },
       last: { progress: 0, speed: 0 },
     };
@@ -47,7 +54,12 @@ export function listenForPointerSwipes(drag: DrawerDrag, signal: AbortSignal) {
 
   function onMove(event: PointerEvent) {
     if (!press || event.pointerId !== press.id) return;
-    const [gesture, step] = stepPointer(press.gesture, { x: event.clientX, y: event.clientY });
+    const commitAt = press.touch ? Infinity : autoCommitDistance(innerWidth);
+    const [gesture, step] = stepPointer(
+      press.gesture,
+      { x: event.clientX, y: event.clientY },
+      { commitAt },
+    );
     press.gesture = gesture;
     if (step.type === 'abandon') {
       press = null;
@@ -56,12 +68,13 @@ export function listenForPointerSwipes(drag: DrawerDrag, signal: AbortSignal) {
     if (step.type === 'wait') return;
     if (step.first && !press.touch) holdSelection();
     press.last = drag.move(step.travel, event.timeStamp, press.row);
+    if (step.type === 'commit') drag.end(true);
   }
 
   function finish(event: PointerEvent, released: boolean) {
     if (!press || event.pointerId !== press.id) return;
     if (press.gesture.axis === 'x') {
-      drag.end(released && commits(press.last));
+      if (!press.gesture.committed) drag.end(released && commits(press.last));
       swallowNextClick();
     }
     releaseSelection();

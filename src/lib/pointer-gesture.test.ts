@@ -1,6 +1,7 @@
 import { expect, test } from 'vite-plus/test';
 
 import {
+  autoCommitDistance,
   commits,
   startPointer,
   stepPointer,
@@ -9,19 +10,30 @@ import {
   type PressFacts,
 } from './pointer-gesture';
 
-function run(closing: boolean, ...points: [number, number][]) {
-  let gesture: PointerGesture = { x: 0, y: 0, closing, axis: null, moving: false };
+function run(
+  { closing, commitAt }: { closing: boolean; commitAt: number },
+  ...points: [number, number][]
+) {
+  let gesture: PointerGesture = {
+    x: 0,
+    y: 0,
+    closing,
+    axis: null,
+    moving: false,
+    committed: false,
+  };
   const steps: PointerStep[] = [];
   for (const [x, y] of points) {
-    const [next, step] = stepPointer(gesture, { x, y });
+    const [next, step] = stepPointer(gesture, { x, y }, { commitAt });
     gesture = next;
     steps.push(step);
   }
   return steps;
 }
 
-const OPENING = false;
-const CLOSING = true;
+const OPENING = { closing: false, commitAt: Infinity };
+const CLOSING = { closing: true, commitAt: Infinity };
+const MOUSE_OPENING = { closing: false, commitAt: 50 };
 
 test('a press waits until it has moved past the axis lock', () => {
   expect(run(OPENING, [-4, 0], [-9, 0])).toEqual([{ type: 'wait' }, { type: 'wait' }]);
@@ -51,6 +63,19 @@ test('a pull the wrong way waits, and can still turn into a swipe', () => {
 
 test('once the panel moves, pulling back past the start keeps dragging it home', () => {
   expect(run(OPENING, [-20, 0], [10, 0]).at(-1)).toEqual({ type: 'drag', travel: 0, first: false });
+});
+
+test('a mouse drag commits once it passes the commit distance, and the rest of the press does nothing', () => {
+  expect(run(MOUSE_OPENING, [-30, 0], [-60, 0], [-90, 0])).toEqual([
+    { type: 'drag', travel: 30, first: true },
+    { type: 'commit', travel: 60, first: false },
+    { type: 'wait' },
+  ]);
+});
+
+test('the commit distance is a third of the viewport, at most 200px', () => {
+  expect(autoCommitDistance(393)).toBe(131);
+  expect(autoCommitDistance(1350)).toBe(200);
 });
 
 test('a release commits on a flick or past a third of the way', () => {
