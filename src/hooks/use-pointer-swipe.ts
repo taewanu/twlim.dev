@@ -22,29 +22,22 @@ export function usePointerSwipe(drag: DrawerDrag, enabled: boolean) {
       closing: boolean;
       row: HTMLElement | null;
       axis: 'x' | 'y' | null;
+      moving: boolean;
       progress: number;
       speed: number;
     } | null = null;
 
     function onDown(event: PointerEvent) {
-      const touch = event.pointerType === 'touch';
-      if (touch ? event.clientX < BACK_GESTURE_EDGE : !isPlainPress(event)) return;
-      const target = event.target instanceof Element ? event.target : null;
-      if (target?.closest('[data-swipe-ignore], pre')) return;
-      const closing = drag.isOpen();
-      // A mouse drag on article text or outside a row selects text instead.
-      if (!touch && closing && target?.closest('article')) return;
-      const row = closing ? null : swipeRowAt(event.clientX, event.clientY);
-      if (!touch && !closing && !row) return;
-      if (!closing && !drag.canOpen(row)) return;
+      const start = swipeStart(event, drag);
+      if (!start) return;
       swipe = {
+        ...start,
         id: event.pointerId,
-        touch,
+        touch: event.pointerType === 'touch',
         x: event.clientX,
         y: event.clientY,
-        closing,
-        row,
         axis: null,
+        moving: false,
         progress: 0,
         speed: 0,
       };
@@ -58,55 +51,71 @@ export function usePointerSwipe(drag: DrawerDrag, enabled: boolean) {
         if (Math.hypot(dx, dy) < AXIS_LOCK) return;
         swipe.axis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
       }
+      // A vertical drag is a scroll or a text selection, not a swipe.
       if (swipe.axis === 'y') {
         swipe = null;
         return;
       }
       const travel = Math.max(0, swipe.closing ? dx : -dx);
-      if (travel === 0 && swipe.progress === 0) return;
-      if (!swipe.touch && swipe.progress === 0) holdSelection();
-      ({ progress: swipe.progress, speed: swipe.speed } = drag.move(
-        travel,
-        event.timeStamp,
-        swipe.row,
-      ));
+      if (!swipe.moving) {
+        // A pull the other way, such as selecting a title rightward, never moves the panel.
+        if (travel === 0) return;
+        swipe.moving = true;
+        if (!swipe.touch) holdSelection();
+      }
+      const step = drag.move(travel, event.timeStamp, swipe.row);
+      swipe.progress = step.progress;
+      swipe.speed = step.speed;
     }
 
-    function finish(event: PointerEvent, commit: boolean) {
+    function finish(event: PointerEvent, released: boolean) {
       if (!swipe || event.pointerId !== swipe.id) return;
       if (swipe.axis === 'x') {
-        drag.end(commit);
+        drag.end(released && (swipe.speed > FLICK_SPEED || swipe.progress > COMMIT_PROGRESS));
         swallowNextClick();
       }
       releaseSelection();
       swipe = null;
     }
 
-    const onUp = (event: PointerEvent) =>
-      finish(
-        event,
-        swipe !== null && (swipe.speed > FLICK_SPEED || swipe.progress > COMMIT_PROGRESS),
-      );
+    const onUp = (event: PointerEvent) => finish(event, true);
     const onCancel = (event: PointerEvent) => finish(event, false);
     // Dragging a row's link would start the browser's link drag and cancel the swipe.
     const onDragStart = (event: DragEvent) => {
       if (swipe) event.preventDefault();
     };
 
-    addEventListener('pointerdown', onDown);
-    addEventListener('pointermove', onMove);
-    addEventListener('pointerup', onUp);
-    addEventListener('pointercancel', onCancel);
-    addEventListener('dragstart', onDragStart);
+    const listeners = new AbortController();
+    const { signal } = listeners;
+    addEventListener('pointerdown', onDown, { signal });
+    addEventListener('pointermove', onMove, { signal });
+    addEventListener('pointerup', onUp, { signal });
+    addEventListener('pointercancel', onCancel, { signal });
+    addEventListener('dragstart', onDragStart, { signal });
     return () => {
-      removeEventListener('pointerdown', onDown);
-      removeEventListener('pointermove', onMove);
-      removeEventListener('pointerup', onUp);
-      removeEventListener('pointercancel', onCancel);
-      removeEventListener('dragstart', onDragStart);
+      listeners.abort();
       releaseSelection();
     };
   }, [drag, enabled]);
+}
+
+/** What a press would swipe, or null when the press belongs to the page: scrolling, selecting text or the browser's back gesture. */
+function swipeStart(event: PointerEvent, drag: DrawerDrag) {
+  const target = event.target instanceof Element ? event.target : null;
+  if (target?.closest('[data-swipe-ignore], pre')) return null;
+  const touch = event.pointerType === 'touch';
+  if (touch && event.clientX < BACK_GESTURE_EDGE) return null;
+  if (!touch && !isPlainPress(event)) return null;
+
+  if (drag.isOpen()) {
+    // A mouse drag on the article's text selects it.
+    if (!touch && target?.closest('article')) return null;
+    return { closing: true, row: null };
+  }
+  const row = swipeRowAt(event.clientX, event.clientY);
+  // A touch on empty space reopens the last article; a mouse there selects text.
+  if (!touch && !row) return null;
+  return drag.canOpen(row) ? { closing: false, row } : null;
 }
 
 function isPlainPress(event: PointerEvent) {
